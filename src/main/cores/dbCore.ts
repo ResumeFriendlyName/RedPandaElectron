@@ -1,5 +1,5 @@
 import { app } from 'electron'
-import { Database } from 'sqlite3'
+import { Database, RunResult } from 'sqlite3'
 import Transaction from '../../renderer/src/models/transaction'
 
 export function setupDatabase(): Database {
@@ -32,12 +32,27 @@ function createTransactionsTable(db: Database): void {
     balance REAL)`)
 }
 
-export function insertTransaction(db: Database, transactions: Transaction[]): void {
-  transactions.map((transaction) =>
-    db.run(
-      `INSERT INTO transactions(date, description, amount, balance) 
+export async function insertTransactions(
+  db: Database,
+  transactions: Transaction[]
+): Promise<string> {
+  return await new Promise<string>((resolve, reject) => {
+    transactions.map((transaction, index) =>
+      db.run(
+        `INSERT INTO transactions(date, description, amount, balance) 
       VALUES(?, ?, ?, ?)`,
-      [transaction.date, transaction.description, transaction.amount, transaction.balance]
+        [transaction.date, transaction.description, transaction.amount, transaction.balance],
+        function (this: RunResult, err: Error | null) {
+          if (err) {
+            reject(err.message)
+          } else {
+            // Used to let the frontend know all transactions have been completed asynchronously
+            if (index === transactions.length - 1) {
+              resolve('')
+            }
+          }
+        }
+      )
     )
-  )
+  })
 }

@@ -1,6 +1,9 @@
-import { app, shell, BrowserWindow } from 'electron'
+import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { importTransactionFiles } from './cores/fileCore'
+import { closeDatabase, insertTransactions, setupDatabase } from './cores/dbCore'
+import { translateBATransactions } from './cores/translationCore'
 
 function createWindow(): void {
   // Create the browser window.
@@ -40,11 +43,28 @@ app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
+  const db = setupDatabase()
+
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
   // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
+    // Register file listener for importing CSV transaction files
+    ipcMain.handle('dialog:importTransactions', async () => {
+      const statusMsg: string = await importTransactionFiles(window)
+        .then(async (stringTransactions) => {
+          // TODO: Need to select bank as user setting before importing
+          return await insertTransactions(db, translateBATransactions(stringTransactions))
+            .then((msg: string) => msg)
+            .catch((err: string) => err)
+        })
+        .catch((err) => {
+          console.error(err)
+          return "Couldn't convert data to target format"
+        })
+      return statusMsg
+    })
   })
 
   createWindow()
@@ -53,6 +73,10 @@ app.whenReady().then(() => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  })
+
+  app.on('before-quit', function () {
+    closeDatabase(db)
   })
 })
 
