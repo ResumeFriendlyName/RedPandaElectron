@@ -29,6 +29,7 @@
     "electron-builder": "^24.6.4",
     "electron-squirrel-startup": "^1.0.0",
     "electron-updater": "^6.1.1",
+    "papaparse": "^5.4.1",
     "sqlite3": "^5.1.6"
   },
   "devDependencies": {
