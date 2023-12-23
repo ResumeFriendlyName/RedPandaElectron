@@ -16,14 +16,14 @@ export async function importTransactionFiles(
     ]
   })
 
-  let transactions: string[] = []
+  const transactions: string[] = []
 
   if (!canceled) {
     filePaths.map((filePath) => {
       const file = readFileSync(filePath, 'utf8')
       parse(file, {
         complete: function (results: ParseResult<string>) {
-          transactions = transactions.concat(results.data)
+          transactions.push(results.data)
         }
       })
     })
