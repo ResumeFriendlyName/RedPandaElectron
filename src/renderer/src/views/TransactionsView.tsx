@@ -1,16 +1,18 @@
-import { faFileImport } from '@fortawesome/free-solid-svg-icons'
+import { faFileImport, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TablePagination from '@renderer/components/TablePagination'
 import TransactionsTable from '@renderer/components/TransactionsTable'
 import Transaction from '@renderer/models/transaction'
 import TransactionResponse from '@renderer/models/transactionResponse'
 import { useCallback, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const TransactionsView = (): JSX.Element => {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [transactionAmount, setTransactionAmount] = useState<number>(10)
   const [transactionCount, setTransactionCount] = useState<number>(0)
   const [offset, setOffset] = useState<number>(0)
+  const navigate = useNavigate()
 
   const handleTransactionAmount = (value: number): void => {
     setTransactionAmount(value)
@@ -31,8 +33,14 @@ const TransactionsView = (): JSX.Element => {
   useEffect(() => getTransactions(), [transactionAmount, offset])
 
   return (
-    <>
-      <h1>Transactions</h1>
+    <div className="widget-expanded">
+      <div className="flex justify-between items-center">
+        <h2>Transactions</h2>
+        <button className="btn btn-sm" onClick={(): void => navigate('/')}>
+          <FontAwesomeIcon icon={faXmark} />
+        </button>
+      </div>
+
       <div className="flex justify-between items-center">
         <TablePagination
           offset={offset}
@@ -62,7 +70,7 @@ const TransactionsView = (): JSX.Element => {
         </button>
       </div>
       <TransactionsTable transactions={transactions} />
-    </>
+    </div>
   )
 }
 

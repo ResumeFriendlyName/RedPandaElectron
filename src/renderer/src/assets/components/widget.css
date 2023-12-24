@@ -1,0 +1,7 @@
+.widget {
+  @apply bg-primary text-primary-content rounded-lg p-3 w-fit shadow-md;
+}
+
+.widget-expanded {
+  @apply bg-primary rounded-lg p-3 flex flex-col gap-5;
+}

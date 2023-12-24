@@ -1,5 +1,11 @@
+import TransactionsWidget from '@renderer/widgets/TransactionsWidget'
+
 const HubView = (): JSX.Element => {
-  return <>Hello world!!</>
+  return (
+    <>
+      <TransactionsWidget />
+    </>
+  )
 }
 
 export default HubView
