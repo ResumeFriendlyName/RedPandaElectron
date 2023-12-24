@@ -35,12 +35,13 @@ function createTransactionsTable(db: Database): void {
 
 export async function getTransactionsCount(db: Database): Promise<number> {
   return new Promise<number>((resolve, reject) =>
-    db.get('SELECT COUNT(id) FROM transactions', (err, count: number) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    db.get('SELECT COUNT(id) FROM transactions', (err, count: any) => {
       if (err) {
         console.error(err.message)
         reject(0)
       }
-      resolve(count)
+      resolve(count['COUNT(id)'] as number)
     })
   )
 }
