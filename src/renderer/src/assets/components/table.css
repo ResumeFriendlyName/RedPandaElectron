@@ -1,5 +1,5 @@
 .table {
-  @apply text-center;
+  @apply text-center text-secondary;
 }
 
 .table thead {

@@ -1,15 +1,9 @@
 .btn {
   box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
-  border-radius: 0.5rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
   transition: box-shadow 150ms,transform 150ms;
   will-change: box-shadow,transform;
   font-size: 1rem;
-  width: fit-content;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  @apply w-fit inline-flex items-center justify-center px-4 rounded-lg text-secondary bg-primary;
 }
 .btn-sm {
   @apply h-8 px-3;
@@ -20,6 +14,9 @@
 .btn-lg {
   @apply h-16 px-6;
   font-size: 1.125rem;
+}
+.btn-round {
+  @apply rounded-full;
 }
 
 .btn:disabled {

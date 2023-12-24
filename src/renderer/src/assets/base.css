@@ -2,6 +2,7 @@ h1 {
   font-size: xx-large;
   font-style: normal;
   font-weight: 200;
+  @apply select-none;
 }
 
 @font-face {
