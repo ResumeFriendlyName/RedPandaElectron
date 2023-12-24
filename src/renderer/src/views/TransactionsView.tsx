@@ -1,3 +1,5 @@
+import { faFileImport } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TablePagination from '@renderer/components/TablePagination'
 import TransactionsTable from '@renderer/components/TransactionsTable'
 import Transaction from '@renderer/models/transaction'
@@ -40,7 +42,7 @@ const TransactionsView = (): JSX.Element => {
           handleAmount={handleTransactionAmount}
         />
         <button
-          className="btn btn-lg"
+          className="btn btn-md"
           onClick={(): void => {
             window.api
               .importTransactions()
@@ -56,7 +58,7 @@ const TransactionsView = (): JSX.Element => {
               })
           }}
         >
-          Import transactions
+          <FontAwesomeIcon icon={faFileImport} />
         </button>
       </div>
       <TransactionsTable transactions={transactions} />
