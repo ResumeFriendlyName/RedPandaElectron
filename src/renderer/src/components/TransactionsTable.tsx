@@ -6,7 +6,7 @@ interface TransactionsTableProps {
 
 const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
   return (
-    <table>
+    <table className="table w-full">
       <thead>
         <tr>
           <th>Date</th>
