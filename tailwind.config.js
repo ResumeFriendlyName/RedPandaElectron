@@ -14,6 +14,7 @@ module.exports = {
       'accent-content': '#1E1815',
       neutral: '#DDFFFF',
       'neutral-content': '#393B60',
+      'neutral-gradient': '#A1BAD7',
       error: '#DE1441',
       success: '#60ED38',
       info: '#3860ED',

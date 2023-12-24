@@ -9,7 +9,7 @@ import { Outlet } from 'react-router-dom'
 
 const ViewLayout = (): JSX.Element => {
   return (
-    <div className="min-h-full p-4 flex flex-col gap-3 bg-neutral">
+    <div className="min-h-full p-4 flex flex-col gap-3 bg-gradient-to-tr from-neutral-gradient to-neutral">
       <div className="flex justify-between items-end">
         <h1 className="text-neutral-content">Red Panda</h1>
         <div className="flex justify-between gap-4 z-10">
