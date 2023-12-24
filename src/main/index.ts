@@ -2,8 +2,9 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { importTransactionFiles } from './cores/fileCore'
-import { closeDatabase, insertTransactions, setupDatabase } from './cores/dbCore'
+import { closeDatabase, getTransactions, insertTransactions, setupDatabase } from './cores/dbCore'
 import { translateBATransactions } from './cores/translationCore'
+import Transaction from '../renderer/src/models/transaction'
 
 function createWindow(): void {
   // Create the browser window.
@@ -77,6 +78,13 @@ app.whenReady().then(() => {
 
   app.on('before-quit', function () {
     closeDatabase(db)
+  })
+
+  ipcMain.handle('db:getTransactions', async (_, amount: number, offset: number) => {
+    const transactions: Transaction[] = await getTransactions(db, amount, offset)
+      .then((transactions) => transactions)
+      .catch((err: []) => err)
+    return transactions
   })
 })
 

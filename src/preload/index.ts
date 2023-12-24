@@ -1,10 +1,14 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import Transaction from '../renderer/src/models/transaction'
 
 // Custom APIs for renderer
 const api = {
   /* File API */
-  importTransactions: (): Promise<string> => ipcRenderer.invoke('dialog:importTransactions')
+  importTransactions: (): Promise<string> => ipcRenderer.invoke('dialog:importTransactions'),
+  /* DB API */
+  getTransactions: (amount: number, offset: number): Promise<Transaction[]> =>
+    ipcRenderer.invoke('db:getTransactions', amount, offset)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

@@ -26,10 +26,28 @@ export function closeDatabase(db: Database): void {
 
 function createTransactionsTable(db: Database): void {
   db.run(`CREATE TABLE IF NOT EXISTS transactions ( 
+    id INTEGER NOT NULL PRIMARY KEY,
     date TEXT NOT NULL,
     description TEXT,
     amount REAL,
     balance REAL)`)
+}
+
+export async function getTransactions(
+  db: Database,
+  amount: number,
+  offset: number
+): Promise<Transaction[]> {
+  const query = `SELECT * FROM transactions ORDER BY "date" DESC LIMIT ${amount} OFFSET ${offset}`
+  return new Promise<Transaction[]>((resolve, reject) =>
+    db.all(query, [], (err, transactions: Transaction[]) => {
+      if (err) {
+        console.error(err.message)
+        reject([])
+      }
+      resolve(transactions)
+    })
+  )
 }
 
 export async function insertTransactions(
