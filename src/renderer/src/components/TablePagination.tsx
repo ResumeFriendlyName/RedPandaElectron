@@ -16,16 +16,14 @@ const TablePagination = (props: TablePaginationProps): JSX.Element => {
     pageCount = Math.max(Math.round(props.count / props.amount), 1)
   }
 
-  console.log(open)
-
   return (
-    <div className="table-pagination">
+    <div className="inline-block">
       <button
         className="btn btn-md"
         onClick={(): void => props.handleOffset(props.offset - 1)}
         disabled={props.offset === 0}
       >
-        Back
+        «
       </button>
 
       <details
@@ -34,10 +32,9 @@ const TablePagination = (props: TablePaginationProps): JSX.Element => {
         onClick={(e): void => {
           e.preventDefault()
           setOpen((prev) => !prev)
-          console.log('ran!')
         }}
       >
-        <summary className="btn btn-md">{`Page ${props.offset + 1} of ${pageCount} (${
+        <summary className="btn btn-md w-44">{`Page ${props.offset + 1} of ${pageCount} (${
           props.amount
         })`}</summary>
         <ol className="dropdown-content text-center">
@@ -60,7 +57,7 @@ const TablePagination = (props: TablePaginationProps): JSX.Element => {
         onClick={(): void => props.handleOffset(props.offset + 1)}
         disabled={(props.offset + 1) * props.amount >= props.count}
       >
-        Forward
+        »
       </button>
     </div>
   )

@@ -31,32 +31,34 @@ const TransactionsView = (): JSX.Element => {
   return (
     <>
       <h1>Transactions</h1>
-      <button
-        onClick={(): void => {
-          window.api
-            .importTransactions()
-            .then((errMsg) => {
-              if (errMsg) {
-                console.error(errMsg)
-              } else {
-                // window.api.getTransactions(transactionAmount, offset).then(setTransactions)
-                getTransactions()
-              }
-            })
-            .catch((err) => {
-              console.error(err)
-            })
-        }}
-      >
-        Import transactions
-      </button>
-      <TablePagination
-        offset={offset}
-        amount={transactionAmount}
-        count={transactionCount}
-        handleOffset={handleOffset}
-        handleAmount={handleTransactionAmount}
-      />
+      <div className="flex justify-between items-center">
+        <TablePagination
+          offset={offset}
+          amount={transactionAmount}
+          count={transactionCount}
+          handleOffset={handleOffset}
+          handleAmount={handleTransactionAmount}
+        />
+        <button
+          className="btn btn-lg"
+          onClick={(): void => {
+            window.api
+              .importTransactions()
+              .then((errMsg) => {
+                if (errMsg) {
+                  console.error(errMsg)
+                } else {
+                  getTransactions()
+                }
+              })
+              .catch((err) => {
+                console.error(err)
+              })
+          }}
+        >
+          Import transactions
+        </button>
+      </div>
       <TransactionsTable transactions={transactions} />
     </>
   )
