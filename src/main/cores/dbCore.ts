@@ -33,6 +33,18 @@ function createTransactionsTable(db: Database): void {
     balance REAL)`)
 }
 
+export async function getTransactionsCount(db: Database): Promise<number> {
+  return new Promise<number>((resolve, reject) =>
+    db.get('SELECT COUNT(id) FROM transactions', (err, count: number) => {
+      if (err) {
+        console.error(err.message)
+        reject(0)
+      }
+      resolve(count)
+    })
+  )
+}
+
 export async function getTransactions(
   db: Database,
   amount: number,
