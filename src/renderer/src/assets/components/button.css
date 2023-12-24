@@ -6,6 +6,13 @@
   transition: box-shadow 150ms,transform 150ms;
   will-change: box-shadow,transform;
   font-size: 1rem;
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-sm {
+  @apply h-8 px-3;
 }
 .btn-md {
   @apply h-12 px-4;
@@ -16,7 +23,7 @@
 }
 
 .btn:disabled {
-  background-color: theme('colors.secondary');
+  @apply bg-opacity-100;
   box-shadow: #D6D6E7 0 -3px 0 inset;
 }
 .btn:hover:not(:disabled) {
