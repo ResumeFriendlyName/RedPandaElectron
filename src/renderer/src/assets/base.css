@@ -4,6 +4,17 @@ h1 {
   font-weight: 200;
   @apply select-none;
 }
+h2 {
+  font-size: x-large;
+  font-style: normal;
+  font-weight: 300;
+}
+h3 {
+  font-size: large;
+  font-style: normal;
+  font-weight: 400;
+  @apply select-none;
+}
 
 @font-face {
   font-family: Poppins;
