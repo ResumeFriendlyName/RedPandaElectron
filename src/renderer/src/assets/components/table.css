@@ -1,5 +1,5 @@
 .table {
-  @apply text-center text-secondary;
+  @apply text-center;
 }
 
 .table thead {
@@ -7,5 +7,5 @@
 }
 
 .table tbody tr {
-  @apply rounded-md hover:bg-accent hover:text-primary leading-8;
+  @apply rounded-md hover:bg-accent hover:text-accent-content leading-8;
 }

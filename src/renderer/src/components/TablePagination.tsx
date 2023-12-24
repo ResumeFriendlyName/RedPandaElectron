@@ -34,10 +34,12 @@ const TablePagination = (props: TablePaginationProps): JSX.Element => {
           setOpen((prev) => !prev)
         }}
       >
-        <summary className="btn btn-md w-44">{`Page ${props.offset + 1} of ${pageCount} (${
-          props.amount
-        })`}</summary>
-        <ol className="dropdown-content text-center">
+        <summary className="btn btn-md w-44">
+          <span className="text-primary-content">{`Page ${props.offset + 1} of ${pageCount} (${
+            props.amount
+          })`}</span>
+        </summary>
+        <ol className="dropdown-content text-center ">
           {[5, 10, 25, 50, 100].map((value) => (
             <li
               key={`li_${value}`}
