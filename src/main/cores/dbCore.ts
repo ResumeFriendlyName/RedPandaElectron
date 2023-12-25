@@ -3,14 +3,13 @@ import { Database, RunResult } from 'sqlite3'
 import Transaction from '../../renderer/src/models/transaction'
 
 export function setupDatabase(): Database {
-  const appPath = app.getPath('appData') + '/' + app.getName()
+  const appPath = app.getPath('appData') + '/' + app.getName() + '/'
+  const dbPath = app.isPackaged ? 'appData.sqlite3' : 'appDataDev.sqlite3'
 
   /* Open database file */
-  const db = new Database(appPath + '/appData.sqlite3', (err) => {
+  const db = new Database(appPath + dbPath, (err) => {
     if (err) {
       console.error(err.message)
-    } else {
-      console.log('Connected to the app-data database.')
     }
   })
 

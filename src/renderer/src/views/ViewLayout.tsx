@@ -35,7 +35,7 @@ const ButtonAndText = (props: ButtonAndTextProps): JSX.Element => {
       <button className="btn btn-md btn-round" disabled>
         <FontAwesomeIcon icon={props.icon} />
       </button>
-      <span className="text-neutral-content">{props.text}</span>
+      <span className="text-neutral-content select-none">{props.text}</span>
     </div>
   )
 }

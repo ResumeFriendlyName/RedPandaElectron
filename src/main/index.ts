@@ -18,12 +18,17 @@ function createWindow(): void {
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
+    minWidth: 675,
+    minHeight: 575,
     show: false,
     autoHideMenuBar: true,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
-    }
+    },
+    icon: '../../public/redPandaLogo.png',
+    titleBarStyle: 'hidden',
+    titleBarOverlay: true
   })
 
   mainWindow.on('ready-to-show', () => {
@@ -91,6 +96,7 @@ app.whenReady().then(() => {
     const transactions: Transaction[] = await getTransactions(db, amount, offset)
       .then((transactions) => transactions)
       .catch((err: []) => err)
+
     const count: number = await getTransactionsCount(db)
       .then((count) => count)
       .catch((err: number) => err)
@@ -106,6 +112,8 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
+  /* Remove handlers using window to not recreate if opened again (but not quit) */
+  ipcMain.removeHandler('dialog:importTransactions')
 })
 
 // In this file you can include the rest of your app"s specific main process

@@ -1,7 +1,7 @@
 {
-  "name": "red-panda",
+  "name": "Red Panda",
   "version": "1.0.0",
-  "description": "An Electron application with React and TypeScript",
+  "description": "Personal finance, done locally.",
   "main": "./dist/main/index.js",
   "author": "ResumeFriendlyName",
   "homepage": "https://github.com/ResumeFriendlyName/RedPandaElectron",

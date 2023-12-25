@@ -15,7 +15,7 @@ const TransactionsWidget = (): JSX.Element => {
     getTransactions(0, 5).then((response: TransactionResponse) =>
       setTransactions(response.transactions)
     )
-  })
+  }, [])
 
   return (
     <div className="widget min-w-[25rem]">

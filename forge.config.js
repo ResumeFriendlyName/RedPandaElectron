@@ -3,7 +3,8 @@ module.exports = {
     ignore: [
       /^\/src/,
       /(.eslintrc.json)|(.gitignore)|(electron.vite.config.ts)|(forge.config.cjs)|(tsconfig.*)/
-    ]
+    ],
+    icon: './public/redPandaLogo'
   },
   rebuildConfig: {},
   makers: [
@@ -17,11 +18,13 @@ module.exports = {
     },
     {
       name: '@electron-forge/maker-deb',
-      config: {}
+      config: {},
+      icon: './public/redPandaLogo.png'
     },
     {
       name: '@electron-forge/maker-rpm',
-      config: {}
+      config: {},
+      icon: './public/redPandaLogo.png'
     }
   ]
 }
