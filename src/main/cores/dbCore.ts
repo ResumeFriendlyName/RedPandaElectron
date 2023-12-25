@@ -9,8 +9,6 @@ export function setupDatabase(): Database {
   const db = new Database(appPath + '/appData.sqlite3', (err) => {
     if (err) {
       console.error(err.message)
-    } else {
-      console.log('Connected to the app-data database.')
     }
   })
 
