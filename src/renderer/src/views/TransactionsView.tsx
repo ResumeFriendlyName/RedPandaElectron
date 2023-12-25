@@ -1,5 +1,6 @@
 import { faFileImport, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { getTransactions } from '@renderer/api/transactionsApi'
 import TablePagination from '@renderer/components/TablePagination'
 import TransactionsTable from '@renderer/components/TransactionsTable'
 import Transaction from '@renderer/models/transaction'
@@ -20,17 +21,14 @@ const TransactionsView = (): JSX.Element => {
   }
   const handleOffset = (value: number): void => setOffset(value)
 
-  const getTransactions = useCallback(() => {
-    window.api
-      .getTransactions(transactionAmount, offset * transactionAmount)
-      .then((response: TransactionResponse) => {
-        setTransactions(response.transactions)
-        setTransactionCount(response.count)
-      })
-      .catch((err) => console.error(err))
+  const getTransactionsCallback = useCallback(() => {
+    getTransactions(offset, transactionAmount).then((response: TransactionResponse) => {
+      setTransactions(response.transactions)
+      setTransactionCount(response.count)
+    })
   }, [transactionAmount, offset])
 
-  useEffect(() => getTransactions(), [transactionAmount, offset])
+  useEffect(() => getTransactionsCallback(), [transactionAmount, offset])
 
   return (
     <div className="widget-expanded">
@@ -58,7 +56,7 @@ const TransactionsView = (): JSX.Element => {
                 if (errMsg) {
                   console.error(errMsg)
                 } else {
-                  getTransactions()
+                  getTransactionsCallback()
                 }
               })
               .catch((err) => {
