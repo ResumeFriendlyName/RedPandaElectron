@@ -1,0 +1,15 @@
+.dropdown {
+  @apply inline-block relative;
+}
+
+.dropdown .btn {
+  @apply cursor-pointer select-none;
+}
+
+.dropdown .dropdown-content {
+  @apply absolute bg-primary rounded-md text-primary-content z-10 w-full shadow-lg;
+}
+
+.dropdown .dropdown-content li {
+  @apply h-8 hover:bg-accent hover:text-accent-content cursor-pointer select-none rounded-md flex justify-center items-center;
+}

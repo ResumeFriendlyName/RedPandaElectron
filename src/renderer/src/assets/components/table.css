@@ -1,0 +1,11 @@
+.table {
+  @apply text-center;
+}
+
+.table thead {
+  @apply border-b-2 border-accent select-none;
+}
+
+.table tbody tr {
+  @apply rounded-md hover:bg-accent hover:text-accent-content leading-8;
+}
