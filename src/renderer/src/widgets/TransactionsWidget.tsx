@@ -19,7 +19,7 @@ const TransactionsWidget = (): JSX.Element => {
 
   return (
     <div className="widget min-w-[25rem]">
-      <div className="flex justify-between items-end">
+      <div className="widget-header">
         <h3>Recent transactions</h3>
         <button className="btn btn-sm" onClick={(): void => navigate('transactions')}>
           <FontAwesomeIcon icon={faArrowUpRightFromSquare} />

@@ -32,7 +32,7 @@ const TransactionsView = (): JSX.Element => {
 
   return (
     <div className="widget-expanded">
-      <div className="flex justify-between items-center">
+      <div className="widget-header">
         <h2>Transactions</h2>
         <button className="btn btn-sm" onClick={(): void => navigate('/')}>
           <FontAwesomeIcon icon={faXmark} />

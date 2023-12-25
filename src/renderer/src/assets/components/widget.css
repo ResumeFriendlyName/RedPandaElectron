@@ -1,7 +1,13 @@
 .widget {
   @apply bg-primary text-primary-content rounded-lg p-3 w-fit shadow-md flex flex-col gap-5;
 }
+.widget .widget-header {
+  @apply flex justify-between items-end;
+}
 
 .widget-expanded {
   @apply bg-primary rounded-lg p-3 flex flex-col gap-5;
+}
+.widget-expanded .widget-header {
+  @apply flex justify-between items-center;
 }
