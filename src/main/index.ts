@@ -78,11 +78,6 @@ app.whenReady().then(() => {
         })
       return statusMsg
     })
-
-    app.on('window-all-closed', function () {
-      /* Remove handlers using window to not recreate if opened again (but not quit) */
-      ipcMain.removeHandler('dialog:importTransactions')
-    })
   })
 
   createWindow()
@@ -117,6 +112,8 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
+  /* Remove handlers using window to not recreate if opened again (but not quit) */
+  ipcMain.removeHandler('dialog:importTransactions')
 })
 
 // In this file you can include the rest of your app"s specific main process
