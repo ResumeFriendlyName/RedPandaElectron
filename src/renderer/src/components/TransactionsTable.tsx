@@ -1,3 +1,5 @@
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Transaction from '@renderer/models/transaction'
 
 interface TransactionsTableProps {
@@ -5,7 +7,7 @@ interface TransactionsTableProps {
 }
 
 const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
-  return (
+  return props.transactions.length ? (
     <table className="table w-full text-primary-content">
       <thead>
         <tr>
@@ -26,6 +28,11 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
         ))}
       </tbody>
     </table>
+  ) : (
+    <div className="info">
+      <FontAwesomeIcon icon={faCircleInfo} className="mr-1" />
+      <span>No transactions available</span>
+    </div>
   )
 }
 

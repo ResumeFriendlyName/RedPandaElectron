@@ -1,0 +1,3 @@
+.info {
+  @apply text-info text-center font-bold select-none;
+}
