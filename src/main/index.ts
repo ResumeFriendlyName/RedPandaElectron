@@ -18,12 +18,17 @@ function createWindow(): void {
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
+    minWidth: 675,
+    minHeight: 575,
     show: false,
     autoHideMenuBar: true,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
-    }
+    },
+    icon: '../../public/redPandaLogo.png',
+    titleBarStyle: 'hidden',
+    titleBarOverlay: true
   })
 
   mainWindow.on('ready-to-show', () => {
