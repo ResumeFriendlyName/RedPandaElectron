@@ -32,7 +32,7 @@ interface ButtonAndTextProps {
 const ButtonAndText = (props: ButtonAndTextProps): JSX.Element => {
   return (
     <div className="flex flex-col items-center gap-1">
-      <button className="btn btn-md btn-round">
+      <button className="btn btn-md btn-round" disabled>
         <FontAwesomeIcon icon={props.icon} />
       </button>
       <span className="text-neutral-content select-none">{props.text}</span>
