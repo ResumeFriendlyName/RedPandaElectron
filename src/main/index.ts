@@ -78,6 +78,11 @@ app.whenReady().then(() => {
         })
       return statusMsg
     })
+
+    app.on('window-all-closed', function () {
+      /* Remove handlers using window to not recreate if opened again (but not quit) */
+      ipcMain.removeHandler('dialog:importTransactions')
+    })
   })
 
   createWindow()
@@ -96,6 +101,7 @@ app.whenReady().then(() => {
     const transactions: Transaction[] = await getTransactions(db, amount, offset)
       .then((transactions) => transactions)
       .catch((err: []) => err)
+
     const count: number = await getTransactionsCount(db)
       .then((count) => count)
       .catch((err: number) => err)
