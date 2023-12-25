@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface TablePaginationProps {
   offset: number
@@ -10,11 +10,12 @@ interface TablePaginationProps {
 
 const TablePagination = (props: TablePaginationProps): JSX.Element => {
   const [open, setOpen] = useState<boolean>(false)
-  let pageCount = 1
+  const [pageCount, setPageCount] = useState<number>(1)
 
-  if (props.count > 0) {
-    pageCount = Math.max(Math.round(props.count / props.amount), 1)
-  }
+  useEffect(
+    () => setPageCount(Math.max(Math.ceil(props.count / props.amount), 1)),
+    [props.count, props.amount]
+  )
 
   return (
     <div className="inline-block">
@@ -39,7 +40,7 @@ const TablePagination = (props: TablePaginationProps): JSX.Element => {
             props.amount
           })`}</span>
         </summary>
-        <ol className="dropdown-content text-center ">
+        <ol className="dropdown-content text-center">
           {[5, 10, 25, 50, 100].map((value) => (
             <li
               key={`li_${value}`}
