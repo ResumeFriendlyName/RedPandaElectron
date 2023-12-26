@@ -1,6 +1,7 @@
 import { faFileImport, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getTransactions } from '@renderer/api/transactionsApi'
+import { ErrorModal } from '@renderer/components/StatusModals'
 import TablePagination from '@renderer/components/TablePagination'
 import TransactionsTable from '@renderer/components/TransactionsTable'
 import Transaction from '@renderer/models/transaction'
@@ -13,6 +14,8 @@ const TransactionsView = (): JSX.Element => {
   const [transactionAmount, setTransactionAmount] = useState<number>(10)
   const [transactionCount, setTransactionCount] = useState<number>(0)
   const [offset, setOffset] = useState<number>(0)
+  const [errorOpen, setErrorOpen] = useState<boolean>(false)
+  const [errorMsg, setErrorMsg] = useState<string>('')
   const navigate = useNavigate()
 
   const handleTransactionAmount = (value: number): void => {
@@ -20,6 +23,7 @@ const TransactionsView = (): JSX.Element => {
     setOffset(0)
   }
   const handleOffset = (value: number): void => setOffset(value)
+  const handleErrorClose = (): void => setErrorOpen(false)
 
   const getTransactionsCallback = useCallback(() => {
     getTransactions(offset, transactionAmount).then((response: TransactionResponse) => {
@@ -40,13 +44,17 @@ const TransactionsView = (): JSX.Element => {
       </div>
 
       <div className="flex justify-between items-center">
-        <TablePagination
-          offset={offset}
-          amount={transactionAmount}
-          count={transactionCount}
-          handleOffset={handleOffset}
-          handleAmount={handleTransactionAmount}
-        />
+        {transactionCount > 0 ? (
+          <TablePagination
+            offset={offset}
+            amount={transactionAmount}
+            count={transactionCount}
+            handleOffset={handleOffset}
+            handleAmount={handleTransactionAmount}
+          />
+        ) : (
+          <div />
+        )}
         <button
           className="btn btn-md"
           onClick={(): void => {
@@ -54,7 +62,8 @@ const TransactionsView = (): JSX.Element => {
               .importTransactions()
               .then((errMsg) => {
                 if (errMsg) {
-                  console.error(errMsg)
+                  setErrorOpen(true)
+                  setErrorMsg(errMsg)
                 } else {
                   getTransactionsCallback()
                 }
@@ -68,6 +77,7 @@ const TransactionsView = (): JSX.Element => {
         </button>
       </div>
       <TransactionsTable transactions={transactions} />
+      <ErrorModal contentText={errorMsg} open={errorOpen} handleClose={handleErrorClose} />
     </div>
   )
 }
