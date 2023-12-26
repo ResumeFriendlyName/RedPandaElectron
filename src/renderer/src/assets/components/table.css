@@ -7,5 +7,5 @@
 }
 
 .table tbody tr {
-  @apply rounded-md hover:bg-accent hover:text-accent-content leading-8;
+  @apply rounded-md hover:bg-accent hover:text-accent-content leading-8 border-b-[1px] border-accent;
 }
