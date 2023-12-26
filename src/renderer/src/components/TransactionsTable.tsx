@@ -22,8 +22,8 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
           <tr key={`tr_${transaction.id}`}>
             <td>{transaction.date}</td>
             <td>{transaction.description}</td>
-            <td>{transaction.amount}</td>
-            <td>{transaction.balance}</td>
+            <td>{transaction.amount.toLocaleString()}</td>
+            <td>{transaction.balance.toLocaleString()}</td>
           </tr>
         ))}
       </tbody>
