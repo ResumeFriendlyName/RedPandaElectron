@@ -3,7 +3,10 @@
   transition: box-shadow 150ms,transform 150ms;
   will-change: box-shadow,transform;
   font-size: 1rem;
-  @apply w-fit inline-flex items-center justify-center px-4 rounded-lg text-secondary bg-primary;
+  @apply w-fit inline-flex items-center justify-center px-4 rounded-lg text-secondary bg-primary select-none;
+}
+.btn span, p {
+  @apply text-primary-content;
 }
 .btn-sm {
   @apply h-8 px-3;
