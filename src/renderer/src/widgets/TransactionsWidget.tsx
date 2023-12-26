@@ -18,7 +18,7 @@ const TransactionsWidget = (): JSX.Element => {
   }, [])
 
   return (
-    <div className="widget min-w-[25rem]">
+    <div className="widget min-w-[25rem] max-w-lg">
       <div className="widget-header">
         <h3>Recent transactions</h3>
         <button className="btn btn-sm" onClick={(): void => navigate('transactions')}>
