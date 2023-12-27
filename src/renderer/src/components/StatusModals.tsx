@@ -1,31 +1,21 @@
 import { IconDefinition, faBomb } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useEffect, useRef } from 'react'
+import Modal from './Modal'
 
 interface StatusModalProps {
   contentText: string
   open: boolean
   handleClose: () => void
 }
-interface ModalProps extends StatusModalProps {
+interface GenericStatusModalProps extends StatusModalProps {
   headingText: string
   icon: IconDefinition
   color: string // This should be a valid tailwind value
 }
 
-const Modal = (props: ModalProps): JSX.Element => {
-  const ref = useRef<HTMLDialogElement>(null)
-
-  useEffect(() => {
-    if (ref && ref.current !== null && props.open) {
-      ref.current.showModal()
-      return () => ref.current?.close()
-    }
-    return
-  }, [props.open])
-
-  return props.open ? (
-    <dialog className="modal max-w-xl" ref={ref} id="status_modal">
+const GenericStatusModal = (props: GenericStatusModalProps): JSX.Element => {
+  return (
+    <Modal open={props.open} className="max-w-xl">
       <div className="modal-content">
         <FontAwesomeIcon icon={props.icon} size="2x" className={props.color} />
         <h3>{props.headingText}</h3>
@@ -43,14 +33,19 @@ const Modal = (props: ModalProps): JSX.Element => {
           </button>
         </form>
       </div>
-    </dialog>
-  ) : (
-    <></>
+    </Modal>
   )
 }
 
 const ErrorModal = (props: StatusModalProps): JSX.Element => {
-  return <Modal {...props} headingText="An error has occurred!" icon={faBomb} color="text-error" />
+  return (
+    <GenericStatusModal
+      {...props}
+      headingText="An error has occurred!"
+      icon={faBomb}
+      color="text-error"
+    />
+  )
 }
 
 export { ErrorModal }
