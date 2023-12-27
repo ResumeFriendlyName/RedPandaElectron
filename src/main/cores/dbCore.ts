@@ -1,6 +1,8 @@
 import { app } from 'electron'
 import { Database, RunResult } from 'sqlite3'
 import Transaction from '../../renderer/src/models/transaction'
+import UserSettings from '../../renderer/src/models/userSettings'
+import { BankType } from '../../renderer/src/models/types'
 
 export function setupDatabase(): Database {
   const appPath = app.getPath('appData') + '/' + app.getName() + '/'
@@ -15,6 +17,7 @@ export function setupDatabase(): Database {
 
   /* Create tables if not already created */
   createTransactionsTable(db)
+  createUserSettingsTable(db)
 
   return db
 }
@@ -30,6 +33,24 @@ function createTransactionsTable(db: Database): void {
     description TEXT,
     amount REAL,
     balance REAL)`)
+}
+
+function createUserSettingsTable(db: Database): void {
+  db.run(
+    `CREATE TABLE IF NOT EXISTS userSettings (
+    id INTEGER NOT NULL PRIMARY KEY,
+    bankPref TEXT NOT NULL UNIQUE
+  )`,
+    () => {
+      db.run(`INSERT INTO userSettings SELECT 1, ? WHERE NOT EXISTS (SELECT * FROM userSettings)`, [
+        BankType.UNSPECIFIED
+      ])
+    }
+  )
+}
+
+export function updateUserSettings(db: Database, userSettings: UserSettings): void {
+  db.run(`UPDATE TABLE SET bankPref = ? WHERE id == 1`, [userSettings.bankPref])
 }
 
 export async function getTransactionsCount(db: Database): Promise<number> {
