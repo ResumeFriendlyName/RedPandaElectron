@@ -5,6 +5,24 @@
   font-size: 1rem;
   @apply w-fit inline-flex items-center justify-center px-4 rounded-lg text-secondary bg-primary select-none;
 }
+.btn:disabled {
+  @apply bg-opacity-100;
+  box-shadow: #D6D6E7 0 -3px 0 inset;
+}
+.btn:hover:not(:disabled, .btn-submit) {
+  transform: translateY(-2px);
+  box-shadow:rgba(45, 35, 66, 0.4) 0 4px 8px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+}
+.btn:active:not(:disabled) {
+  box-shadow: #D6D6E7 0 3px 7px inset;
+  transform: translateY(2px);
+}
+
+.btn-submit {
+  box-shadow: #D6D6E7 0 3px 7px inset;
+  transform: translateY(2px);
+}
+
 .btn span, p {
   @apply text-primary-content;
 }
@@ -20,17 +38,4 @@
 }
 .btn-round {
   @apply rounded-full;
-}
-
-.btn:disabled {
-  @apply bg-opacity-100;
-  box-shadow: #D6D6E7 0 -3px 0 inset;
-}
-.btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow:rgba(45, 35, 66, 0.4) 0 4px 8px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
-}
-.btn:active:not(:disabled) {
-  box-shadow: #D6D6E7 0 3px 7px inset;
-  transform: translateY(2px);
 }

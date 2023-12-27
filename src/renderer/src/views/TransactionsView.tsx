@@ -1,11 +1,14 @@
 import { faFileImport, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getTransactions } from '@renderer/api/transactionsApi'
+import BankPreferenceModal from '@renderer/components/BankPreferenceModal'
 import { ErrorModal } from '@renderer/components/StatusModals'
 import TablePagination from '@renderer/components/TablePagination'
 import TransactionsTable from '@renderer/components/TransactionsTable'
 import Transaction from '@renderer/models/transaction'
 import TransactionResponse from '@renderer/models/transactionResponse'
+import { BankType } from '@renderer/models/types'
+import UserSettings from '@renderer/models/userSettings'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -14,8 +17,9 @@ const TransactionsView = (): JSX.Element => {
   const [transactionAmount, setTransactionAmount] = useState<number>(10)
   const [transactionCount, setTransactionCount] = useState<number>(0)
   const [offset, setOffset] = useState<number>(0)
-  const [errorOpen, setErrorOpen] = useState<boolean>(false)
   const [errorMsg, setErrorMsg] = useState<string>('')
+  const [userSettings, setUserSettings] = useState<UserSettings>()
+  const [bankModalIsOpen, setBankModalOpen] = useState<boolean>(false)
   const navigate = useNavigate()
 
   const handleTransactionAmount = (value: number): void => {
@@ -23,7 +27,12 @@ const TransactionsView = (): JSX.Element => {
     setOffset(0)
   }
   const handleOffset = (value: number): void => setOffset(value)
-  const handleErrorClose = (): void => setErrorOpen(false)
+
+  const handleBankModalSubmit = (value: BankType): void => {
+    setBankModalOpen(false)
+    setUserSettings((prev) => ({ ...prev, bankPref: value }))
+    window.api.updateUserSettings({ bankPref: value })
+  }
 
   const getTransactionsCallback = useCallback(() => {
     getTransactions(offset, transactionAmount).then((response: TransactionResponse) => {
@@ -32,12 +41,19 @@ const TransactionsView = (): JSX.Element => {
     })
   }, [transactionAmount, offset])
 
+  useEffect(() => {
+    window.api
+      .getUserSettings()
+      .then((response: UserSettings) => setUserSettings(response))
+      .catch((err: Error) => setErrorMsg(err.message))
+  }, [])
   useEffect(() => getTransactionsCallback(), [transactionAmount, offset])
 
   return (
     <div className="widget-expanded">
       <div className="widget-header">
         <h2>Transactions</h2>
+        {/* Close transactions view button */}
         <button className="btn btn-sm" onClick={(): void => navigate('/')}>
           <FontAwesomeIcon icon={faXmark} />
         </button>
@@ -55,29 +71,35 @@ const TransactionsView = (): JSX.Element => {
         ) : (
           <div />
         )}
+        {/* Import transactions button */}
         <button
           className="btn btn-md"
           onClick={(): void => {
-            window.api
-              .importTransactions()
-              .then((errMsg) => {
-                if (errMsg) {
-                  setErrorOpen(true)
-                  setErrorMsg(errMsg)
-                } else {
-                  getTransactionsCallback()
-                }
-              })
-              .catch((err) => {
-                console.error(err)
-              })
+            if (userSettings?.bankPref !== BankType.UNSPECIFIED) {
+              // Todo: This promise handling feels jank, fix
+              window.api
+                .importTransactions()
+                .then((errMsg) => {
+                  if (errMsg) {
+                    setErrorMsg(errMsg)
+                  } else {
+                    getTransactionsCallback()
+                  }
+                })
+                .catch((err) => {
+                  console.error(err)
+                })
+            } else {
+              setBankModalOpen(true)
+            }
           }}
         >
           <FontAwesomeIcon icon={faFileImport} />
         </button>
       </div>
       <TransactionsTable transactions={transactions} />
-      <ErrorModal contentText={errorMsg} open={errorOpen} handleClose={handleErrorClose} />
+      <ErrorModal contentText={errorMsg} />
+      <BankPreferenceModal open={bankModalIsOpen} handleSubmit={handleBankModalSubmit} />
     </div>
   )
 }
