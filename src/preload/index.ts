@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import TransactionResponse from '../renderer/src/models/transactionResponse'
+import UserSettings from '../renderer/src/models/userSettings'
 
 // Custom APIs for renderer
 const api = {
@@ -8,7 +9,10 @@ const api = {
   importTransactions: (): Promise<string> => ipcRenderer.invoke('dialog:importTransactions'),
   /* DB API */
   getTransactions: (amount: number, offset: number): Promise<TransactionResponse> =>
-    ipcRenderer.invoke('db:getTransactions', amount, offset)
+    ipcRenderer.invoke('db:getTransactions', amount, offset),
+  getUserSettings: (): Promise<UserSettings> => ipcRenderer.invoke('db:getUserSettings'),
+  updateUserSettings: (userSettings: UserSettings): Promise<void> =>
+    ipcRenderer.invoke('db:updateUserSettings', userSettings)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

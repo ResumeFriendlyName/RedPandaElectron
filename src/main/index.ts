@@ -6,12 +6,15 @@ import {
   closeDatabase,
   getTransactions,
   getTransactionsCount,
+  getUserSettings,
   insertTransactions,
-  setupDatabase
+  setupDatabase,
+  updateUserSettings
 } from './cores/dbCore'
 import { translateBATransactions } from './cores/translationCore'
 import Transaction from '../renderer/src/models/transaction'
 import TransactionResponse from '../renderer/src/models/transactionResponse'
+import UserSettings from '../renderer/src/models/userSettings'
 
 function createWindow(): void {
   // Create the browser window.
@@ -102,6 +105,22 @@ app.whenReady().then(() => {
       .catch((err: number) => err)
     const response: TransactionResponse = { transactions, count }
     return response
+  })
+
+  ipcMain.handle('db:getUserSettings', async () => {
+    return new Promise<UserSettings>((resolve, reject) => {
+      getUserSettings(db)
+        .then((userSettings) => resolve(userSettings))
+        .catch((err) => reject(err))
+    })
+  })
+
+  ipcMain.handle('db:updateUserSettings', async (_, userSettings: UserSettings) => {
+    return new Promise<void>((resolve, reject) => {
+      updateUserSettings(db, userSettings)
+        .then(() => resolve())
+        .catch((err) => reject(err))
+    })
   })
 })
 

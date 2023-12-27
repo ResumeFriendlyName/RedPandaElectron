@@ -49,8 +49,30 @@ function createUserSettingsTable(db: Database): void {
   )
 }
 
-export function updateUserSettings(db: Database, userSettings: UserSettings): void {
-  db.run(`UPDATE TABLE SET bankPref = ? WHERE id == 1`, [userSettings.bankPref])
+export function getUserSettings(db: Database): Promise<UserSettings> {
+  return new Promise<UserSettings>((resolve, reject) => {
+    db.get('SELECT * FROM userSettings', (err, userSettings: UserSettings) => {
+      if (err) {
+        reject(err)
+      }
+      resolve(userSettings)
+    })
+  })
+}
+
+export function updateUserSettings(db: Database, userSettings: UserSettings): Promise<void> {
+  return new Promise<void>((resolve, reject) =>
+    db.run(
+      `UPDATE userSettings SET bankPref = ? WHERE id = 1`,
+      [userSettings.bankPref],
+      (_, err: Error) => {
+        if (err) {
+          reject(err)
+        }
+        resolve()
+      }
+    )
+  )
 }
 
 export async function getTransactionsCount(db: Database): Promise<number> {
