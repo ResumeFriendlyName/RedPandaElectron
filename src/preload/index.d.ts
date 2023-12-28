@@ -3,7 +3,7 @@ import TransactionResponse from '@renderer/models/transactionResponse'
 import UserSettings from '@renderer/models/userSettings'
 
 interface API {
-  importTransactions: () => Promise<string>
+  importTransactions: () => Promise<void>
   getTransactions: (amount: number, offset: number) => Promise<TransactionResponse>
   getUserSettings: () => Promise<UserSettings>
   updateUserSettings: (userSettings: UserSettings) => Promise<void>

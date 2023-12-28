@@ -31,7 +31,16 @@ const TransactionsView = (): JSX.Element => {
   const handleBankModalSubmit = (value: BankType): void => {
     setBankModalOpen(false)
     setUserSettings((prev) => ({ ...prev, bankPref: value }))
-    window.api.updateUserSettings({ bankPref: value })
+    window.api.updateUserSettings({ bankPref: value }).then(() => importTransactions())
+  }
+
+  const handleErrorModalClose = (): void => setErrorMsg('')
+
+  const importTransactions = (): void => {
+    window.api
+      .importTransactions()
+      .then(() => getTransactionsCallback())
+      .catch((err: Error) => setErrorMsg(err.message))
   }
 
   const getTransactionsCallback = useCallback(() => {
@@ -75,22 +84,10 @@ const TransactionsView = (): JSX.Element => {
         <button
           className="btn btn-md"
           onClick={(): void => {
-            if (userSettings?.bankPref !== BankType.UNSPECIFIED) {
-              // Todo: This promise handling feels jank, fix
-              window.api
-                .importTransactions()
-                .then((errMsg) => {
-                  if (errMsg) {
-                    setErrorMsg(errMsg)
-                  } else {
-                    getTransactionsCallback()
-                  }
-                })
-                .catch((err) => {
-                  console.error(err)
-                })
-            } else {
+            if (userSettings?.bankPref === BankType.UNSPECIFIED) {
               setBankModalOpen(true)
+            } else {
+              importTransactions()
             }
           }}
         >
@@ -98,7 +95,7 @@ const TransactionsView = (): JSX.Element => {
         </button>
       </div>
       <TransactionsTable transactions={transactions} />
-      <ErrorModal contentText={errorMsg} />
+      <ErrorModal contentText={errorMsg} handleClose={handleErrorModalClose} />
       <BankPreferenceModal open={bankModalIsOpen} handleSubmit={handleBankModalSubmit} />
     </div>
   )

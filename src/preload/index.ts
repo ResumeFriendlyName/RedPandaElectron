@@ -6,7 +6,7 @@ import UserSettings from '../renderer/src/models/userSettings'
 // Custom APIs for renderer
 const api = {
   /* File API */
-  importTransactions: (): Promise<string> => ipcRenderer.invoke('dialog:importTransactions'),
+  importTransactions: (): Promise<void> => ipcRenderer.invoke('dialog:importTransactions'),
   /* DB API */
   getTransactions: (amount: number, offset: number): Promise<TransactionResponse> =>
     ipcRenderer.invoke('db:getTransactions', amount, offset),
