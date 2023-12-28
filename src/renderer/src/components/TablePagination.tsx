@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import Dropdown from './Dropdown'
 
 interface TablePaginationProps {
   offset: number
@@ -9,7 +10,6 @@ interface TablePaginationProps {
 }
 
 const TablePagination = (props: TablePaginationProps): JSX.Element => {
-  const [open, setOpen] = useState<boolean>(false)
   const [pageCount, setPageCount] = useState<number>(1)
 
   useEffect(
@@ -26,35 +26,11 @@ const TablePagination = (props: TablePaginationProps): JSX.Element => {
       >
         «
       </button>
-
-      <details
-        className="dropdown"
-        open={open}
-        onClick={(e): void => {
-          e.preventDefault()
-          setOpen((prev) => !prev)
-        }}
-      >
-        <summary className="btn btn-md w-44">
-          <span className="text-primary-content">{`Page ${props.offset + 1} of ${pageCount} (${
-            props.amount
-          })`}</span>
-        </summary>
-        <ol className="dropdown-content text-center">
-          {[5, 10, 25, 50, 100].map((value) => (
-            <li
-              key={`li_${value}`}
-              onClick={(e): void => {
-                e.stopPropagation()
-                props.handleAmount(value)
-                setOpen(false)
-              }}
-            >
-              {value}
-            </li>
-          ))}
-        </ol>
-      </details>
+      <Dropdown
+        dropdownContent={`Page ${props.offset + 1} of ${pageCount} (${props.amount})`}
+        dropdownItems={['5', '10', '25', '50', '100']}
+        handleSelect={(value: string): void => props.handleAmount(Number(value))}
+      />
       <button
         className="btn btn-md"
         onClick={(): void => props.handleOffset(props.offset + 1)}
