@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 
 interface StatusModalProps {
   contentText: string
+  handleClose: () => void
 }
 interface GenericStatusModalProps extends StatusModalProps {
   headingText: string
@@ -31,6 +32,7 @@ const GenericStatusModal = (props: GenericStatusModalProps): JSX.Element => {
             onClick={(e): void => {
               e.preventDefault()
               setOpen(false)
+              props.handleClose()
             }}
             type="submit"
           >
@@ -49,6 +51,7 @@ const ErrorModal = (props: StatusModalProps): JSX.Element => {
       headingText="An error has occurred!"
       icon={faBomb}
       color="text-error"
+      handleClose={props.handleClose}
     />
   )
 }

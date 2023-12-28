@@ -36,7 +36,9 @@ const BankPreferenceModal = (props: BankPreferenceModalProps): JSX.Element => {
               </button>
             ))}
         </div>
-        <p>{bankInfo}</p>
+        <div className="min-h-[1.5rem]">
+          <p>{bankInfo}</p>
+        </div>
         <form method="dialog">
           <button
             className="btn btn-md"
