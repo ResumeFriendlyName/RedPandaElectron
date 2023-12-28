@@ -3,7 +3,7 @@
 }
 
 .dropdown .btn {
-  @apply cursor-pointer select-none;
+  @apply cursor-pointer select-none w-full;
 }
 
 .dropdown .dropdown-content {

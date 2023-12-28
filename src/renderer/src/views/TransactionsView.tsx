@@ -1,16 +1,16 @@
-import { faFileImport, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faFileImport } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getTransactions } from '@renderer/api/transactionsApi'
 import BankPreferenceModal from '@renderer/components/BankPreferenceModal'
 import { ErrorModal } from '@renderer/components/StatusModals'
 import TablePagination from '@renderer/components/TablePagination'
 import TransactionsTable from '@renderer/components/TransactionsTable'
+import WidgetHeader from '@renderer/components/WidgetHeader'
 import Transaction from '@renderer/models/transaction'
 import TransactionResponse from '@renderer/models/transactionResponse'
 import { BankType } from '@renderer/models/types'
 import UserSettings from '@renderer/models/userSettings'
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 const TransactionsView = (): JSX.Element => {
   const [transactions, setTransactions] = useState<Transaction[]>([])
@@ -20,7 +20,6 @@ const TransactionsView = (): JSX.Element => {
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [userSettings, setUserSettings] = useState<UserSettings>()
   const [bankModalIsOpen, setBankModalOpen] = useState<boolean>(false)
-  const navigate = useNavigate()
 
   const handleTransactionAmount = (value: number): void => {
     setTransactionAmount(value)
@@ -33,8 +32,6 @@ const TransactionsView = (): JSX.Element => {
     setUserSettings((prev) => ({ ...prev, bankPref: value }))
     window.api.updateUserSettings({ bankPref: value }).then(() => importTransactions())
   }
-
-  const handleErrorModalClose = (): void => setErrorMsg('')
 
   const importTransactions = (): void => {
     window.api
@@ -60,13 +57,7 @@ const TransactionsView = (): JSX.Element => {
 
   return (
     <div className="widget-expanded">
-      <div className="widget-header">
-        <h2>Transactions</h2>
-        {/* Close transactions view button */}
-        <button className="btn btn-sm" onClick={(): void => navigate('/')}>
-          <FontAwesomeIcon icon={faXmark} />
-        </button>
-      </div>
+      <WidgetHeader heading="Transactions" />
 
       <div className="flex justify-between items-center">
         {transactionCount > 0 ? (
@@ -95,7 +86,7 @@ const TransactionsView = (): JSX.Element => {
         </button>
       </div>
       <TransactionsTable transactions={transactions} />
-      <ErrorModal contentText={errorMsg} handleClose={handleErrorModalClose} />
+      <ErrorModal contentText={errorMsg} handleClose={(): void => setErrorMsg('')} />
       <BankPreferenceModal open={bankModalIsOpen} handleSubmit={handleBankModalSubmit} />
     </div>
   )

@@ -3,6 +3,7 @@ import { useState } from 'react'
 interface DropdownProps {
   dropdownContent: string
   dropdownItems: string[]
+  className?: string
   handleSelect: (value: string) => void
 }
 
@@ -11,14 +12,14 @@ const Dropdown = (props: DropdownProps): JSX.Element => {
 
   return (
     <details
-      className="dropdown"
+      className={`dropdown ${props.className ? props.className : ''}`}
       open={open}
       onClick={(e): void => {
         e.preventDefault()
         setOpen((prev) => !prev)
       }}
     >
-      <summary className="btn btn-md w-44">
+      <summary className="btn btn-md">
         <span className="text-primary-content">{props.dropdownContent}</span>
       </summary>
       <ol className="dropdown-content text-center">

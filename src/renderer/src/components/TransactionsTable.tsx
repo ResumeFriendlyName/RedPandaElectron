@@ -8,7 +8,7 @@ interface TransactionsTableProps {
 
 const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
   return props.transactions.length ? (
-    <table className="table w-full text-primary-content">
+    <table className="table table-hover w-full text-primary-content">
       <thead>
         <tr>
           <th>Date</th>
