@@ -67,19 +67,20 @@ app.whenReady().then(() => {
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
     // Register file listener for importing CSV transaction files
-    ipcMain.handle('dialog:importTransactions', async () => {
-      const statusMsg: string = await importTransactionFiles(window)
-        .then(async (stringTransactions) => {
-          // TODO: Need to select bank as user setting before importing
-          return await insertTransactions(db, translateBATransactions(stringTransactions))
-            .then((msg: string) => msg)
-            .catch((err: string) => err)
-        })
-        .catch((err) => {
-          console.error(err)
-          return "Couldn't convert data to target format"
-        })
-      return statusMsg
+    ipcMain.handle('dialog:importTransactions', () => {
+      return new Promise<void>((resolve, reject) => {
+        getUserSettings(db)
+          .then(async (userSettings) => {
+            return importTransactionFiles(window, userSettings.bankPref).then(
+              async (stringTransactions) => {
+                return insertTransactions(db, translateBATransactions(stringTransactions)).then(
+                  () => resolve()
+                )
+              }
+            )
+          })
+          .catch((err) => reject(err))
+      })
     })
   })
 
@@ -131,7 +132,7 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
-  /* Remove handlers using window to not recreate if opened again (but not quit) */
+  /* Remove handlers using window to not recreate if opened again (but not quit) -> for MacOS */
   ipcMain.removeHandler('dialog:importTransactions')
 })
 
