@@ -47,6 +47,7 @@ export async function importTransactionFiles(
           })
           resolve(transactions)
         }
+        resolve([])
       })
       .catch((err) => reject(err))
   })
