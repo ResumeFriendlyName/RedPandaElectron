@@ -1,4 +1,4 @@
-import { faFileImport } from '@fortawesome/free-solid-svg-icons'
+import { faFileImport, faRotateLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getTransactions } from '@renderer/api/transactionsApi'
 import BankPreferenceModal from '@renderer/components/BankPreferenceModal'
@@ -17,6 +17,7 @@ const TransactionsView = (): JSX.Element => {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [transactionAmount, setTransactionAmount] = useState<number>(10)
   const [transactionCount, setTransactionCount] = useState<number>(0)
+  const [lastImportIds, setLastImportIds] = useState<number[]>([])
   const [offset, setOffset] = useState<number>(0)
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [userSettings, setUserSettings] = useState<UserSettings>()
@@ -41,7 +42,10 @@ const TransactionsView = (): JSX.Element => {
   const importTransactions = (): void => {
     window.api
       .importTransactions()
-      .then(() => getTransactionsCallback())
+      .then((ids: number[]) => {
+        setLastImportIds(ids)
+        getTransactionsCallback()
+      })
       .catch((err: Error) => setErrorMsg(err.message))
   }
 
@@ -86,19 +90,36 @@ const TransactionsView = (): JSX.Element => {
             ) : (
               <div />
             )}
-            {/* Import transactions button */}
-            <button
-              className="btn btn-md"
-              onClick={(): void => {
-                if (userSettings?.bankPref === BankType.UNSPECIFIED) {
-                  setBankModalOpen(true)
-                } else {
-                  importTransactions()
-                }
-              }}
-            >
-              <FontAwesomeIcon icon={faFileImport} />
-            </button>
+            <div className="flex gap-6">
+              {lastImportIds.length > 0 && (
+                <button
+                  className="btn btn-md"
+                  onClick={(): void => {
+                    setLoading(true)
+                    window.api
+                      .deleteTransactions(lastImportIds)
+                      .then(() => setLastImportIds([]))
+                      .catch((err: Error) => setErrorMsg(err.message))
+                      .finally(() => setLoading(false))
+                  }}
+                >
+                  <FontAwesomeIcon icon={faRotateLeft} />{' '}
+                </button>
+              )}
+              {/* Import transactions button */}
+              <button
+                className="btn btn-md"
+                onClick={(): void => {
+                  if (userSettings?.bankPref === BankType.UNSPECIFIED) {
+                    setBankModalOpen(true)
+                  } else {
+                    importTransactions()
+                  }
+                }}
+              >
+                <FontAwesomeIcon icon={faFileImport} />
+              </button>
+            </div>
           </div>
           <TransactionsTable transactions={transactions} />
           <BankPreferenceModal open={bankModalIsOpen} handleSubmit={handleBankModalSubmit} />
