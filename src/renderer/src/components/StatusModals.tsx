@@ -30,7 +30,7 @@ const GenericStatusModal = (props: StatusModalProps): JSX.Element => {
     <Modal open={props.open}>
       <div className={`modal-content ${props.className ? props.className : ''}`}>
         <FontAwesomeIcon icon={props.icon} size="2x" className={props.color} />
-        {props.headingText && <h3>{props.headingText}</h3>}
+        <h3>{props.headingText}</h3>
         {props.content}
         <form method="dialog">
           <button
