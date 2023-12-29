@@ -9,15 +9,18 @@ import TransactionsTable from '@renderer/components/TransactionsTable'
 import WidgetHeader from '@renderer/components/WidgetHeader'
 import Transaction from '@renderer/models/transaction'
 import TransactionResponse from '@renderer/models/transactionResponse'
-import { BankType } from '@renderer/models/types'
+import { BankType, SessionStorageKey } from '@renderer/models/types'
 import UserSettings from '@renderer/models/userSettings'
+import useSessionStorage from '@renderer/utils/CustomHooks'
 import { useCallback, useEffect, useState } from 'react'
 
 const TransactionsView = (): JSX.Element => {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [transactionAmount, setTransactionAmount] = useState<number>(10)
   const [transactionCount, setTransactionCount] = useState<number>(0)
-  const [lastImportIds, setLastImportIds] = useState<number[]>([])
+  const [lastImportIds, setLastImportIds] = useSessionStorage<number[]>(
+    SessionStorageKey.LAST_TRANSACTION_IMPORT_IDS
+  )
   const [offset, setOffset] = useState<number>(0)
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [userSettings, setUserSettings] = useState<UserSettings>()
