@@ -3,6 +3,7 @@ import { Database, RunResult } from 'sqlite3'
 import Transaction from '../../renderer/src/models/transaction'
 import UserSettings from '../../renderer/src/models/userSettings'
 import { BankType } from '../../renderer/src/models/types'
+import { fatalError } from './dialogCore'
 
 export function setupDatabase(): Database {
   const appPath = app.getPath('appData') + '/' + app.getName() + '/'
@@ -11,7 +12,7 @@ export function setupDatabase(): Database {
   /* Open database file */
   const db = new Database(appPath + dbPath, (err) => {
     if (err) {
-      console.error(err.message)
+      fatalError(err.message)
     }
   })
 
@@ -80,8 +81,7 @@ export async function getTransactionsCount(db: Database): Promise<number> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     db.get('SELECT COUNT(id) FROM transactions', (err, count: any) => {
       if (err) {
-        console.error(err.message)
-        reject(0)
+        reject(err)
       }
       resolve(count['COUNT(id)'] as number)
     })
@@ -97,8 +97,7 @@ export async function getTransactions(
   return new Promise<Transaction[]>((resolve, reject) =>
     db.all(query, [], (err, transactions: Transaction[]) => {
       if (err) {
-        console.error(err.message)
-        reject([])
+        reject(err)
       }
       resolve(transactions)
     })

@@ -1,7 +1,7 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import { importTransactionFiles } from './cores/fileCore'
+import { importTransactionFiles } from './cores/dialogCore'
 import {
   closeDatabase,
   getTransactions,
@@ -12,9 +12,9 @@ import {
   updateUserSettings
 } from './cores/dbCore'
 import { translateBATransactions } from './cores/translationCore'
-import Transaction from '../renderer/src/models/transaction'
 import TransactionResponse from '../renderer/src/models/transactionResponse'
 import UserSettings from '../renderer/src/models/userSettings'
+import { Database } from 'sqlite3'
 
 function createWindow(): void {
   // Create the browser window.
@@ -59,7 +59,7 @@ app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
-  const db = setupDatabase()
+  const db: Database = setupDatabase()
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
@@ -97,15 +97,16 @@ app.whenReady().then(() => {
   })
 
   ipcMain.handle('db:getTransactions', async (_, amount: number, offset: number) => {
-    const transactions: Transaction[] = await getTransactions(db, amount, offset)
-      .then((transactions) => transactions)
-      .catch((err: []) => err)
-
-    const count: number = await getTransactionsCount(db)
-      .then((count) => count)
-      .catch((err: number) => err)
-    const response: TransactionResponse = { transactions, count }
-    return response
+    return new Promise<TransactionResponse>((resolve, reject) => {
+      getTransactions(db, amount, offset)
+        .then(async (transactions) => {
+          return getTransactionsCount(db).then((count) => {
+            const response: TransactionResponse = { transactions, count }
+            resolve(response)
+          })
+        })
+        .catch((err: Error) => reject(err))
+    })
   })
 
   ipcMain.handle('db:getUserSettings', async () => {
