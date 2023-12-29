@@ -73,9 +73,12 @@ app.whenReady().then(() => {
           .then(async (userSettings) => {
             return importTransactionFiles(window, userSettings.bankPref).then(
               async (stringTransactions) => {
-                return insertTransactions(db, translateBATransactions(stringTransactions)).then(
-                  () => resolve()
-                )
+                if (stringTransactions.length > 0) {
+                  return insertTransactions(db, translateBATransactions(stringTransactions)).then(
+                    () => resolve()
+                  )
+                }
+                resolve()
               }
             )
           })
