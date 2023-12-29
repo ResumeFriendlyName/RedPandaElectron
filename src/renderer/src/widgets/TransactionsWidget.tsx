@@ -24,22 +24,16 @@ const TransactionsWidget = (): JSX.Element => {
   }, [])
 
   return (
-    <>
-      {!loading ? (
-        <div className="widget min-w-[25rem] max-w-lg">
-          <div className="widget-header">
-            <h3>Recent transactions</h3>
-            <button className="btn btn-sm" onClick={(): void => navigate('transactions')}>
-              <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-            </button>
-          </div>
-          <TransactionsTable transactions={transactions} />
-        </div>
-      ) : (
-        <Loader />
-      )}
+    <div className="widget min-w-[25rem] max-w-lg">
+      <div className="widget-header">
+        <h3>Recent transactions</h3>
+        <button className="btn btn-sm" onClick={(): void => navigate('transactions')}>
+          <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+        </button>
+      </div>
+      {!loading ? <TransactionsTable transactions={transactions} /> : <Loader />}
       <ErrorModal contentText={errorMsg} handleClose={(): void => setErrorMsg('')} />
-    </>
+    </div>
   )
 }
 

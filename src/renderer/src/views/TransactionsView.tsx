@@ -71,62 +71,56 @@ const TransactionsView = (): JSX.Element => {
   useEffect(() => getTransactionsCallback(), [transactionAmount, offset])
 
   return (
-    <>
-      {!loading ? (
-        <div className="widget-expanded">
-          <WidgetHeader heading="Transactions" />
+    <div className="widget-expanded">
+      <WidgetHeader heading="Transactions" />
 
-          <div className="flex justify-between items-center">
-            {transactionCount > 0 ? (
-              <TablePagination
-                offset={offset}
-                amount={transactionAmount}
-                count={transactionCount}
-                handleOffset={handleOffset}
-                handleAmount={handleTransactionAmount}
-              />
-            ) : (
-              <div />
-            )}
-            <div className="flex gap-6">
-              {lastImportIds.length > 0 && (
-                <button
-                  className="btn btn-md"
-                  onClick={(): void => {
-                    setLoading(true)
-                    window.api
-                      .deleteTransactions(lastImportIds)
-                      .then(() => setLastImportIds([]))
-                      .catch((err: Error) => setErrorMsg(err.message))
-                      .finally(() => setLoading(false))
-                  }}
-                >
-                  <FontAwesomeIcon icon={faRotateLeft} />{' '}
-                </button>
-              )}
-              {/* Import transactions button */}
-              <button
-                className="btn btn-md"
-                onClick={(): void => {
-                  if (userSettings?.bankPref === BankType.UNSPECIFIED) {
-                    setBankModalOpen(true)
-                  } else {
-                    importTransactions()
-                  }
-                }}
-              >
-                <FontAwesomeIcon icon={faFileImport} />
-              </button>
-            </div>
-          </div>
-          <TransactionsTable transactions={transactions} />
-          <BankPreferenceModal open={bankModalIsOpen} handleSubmit={handleBankModalSubmit} />
+      <div className="flex justify-between items-center">
+        {transactionCount > 0 ? (
+          <TablePagination
+            offset={offset}
+            amount={transactionAmount}
+            count={transactionCount}
+            handleOffset={handleOffset}
+            handleAmount={handleTransactionAmount}
+          />
+        ) : (
+          <div />
+        )}
+        <div className="flex gap-6">
+          {lastImportIds.length > 0 && (
+            <button
+              className="btn btn-md"
+              onClick={(): void => {
+                setLoading(true)
+                window.api
+                  .deleteTransactions(lastImportIds)
+                  .then(() => setLastImportIds([]))
+                  .catch((err: Error) => setErrorMsg(err.message))
+                  .finally(() => setLoading(false))
+              }}
+            >
+              <FontAwesomeIcon icon={faRotateLeft} />{' '}
+            </button>
+          )}
+          {/* Import transactions button */}
+          <button
+            className="btn btn-md"
+            onClick={(): void => {
+              if (userSettings?.bankPref === BankType.UNSPECIFIED) {
+                setBankModalOpen(true)
+              } else {
+                importTransactions()
+              }
+            }}
+          >
+            <FontAwesomeIcon icon={faFileImport} />
+          </button>
         </div>
-      ) : (
-        <Loader />
-      )}
+      </div>
+      {!loading ? <TransactionsTable transactions={transactions} /> : <Loader />}
+      <BankPreferenceModal open={bankModalIsOpen} handleSubmit={handleBankModalSubmit} />
       <ErrorModal contentText={errorMsg} handleClose={(): void => setErrorMsg('')} />
-    </>
+    </div>
   )
 }
 
