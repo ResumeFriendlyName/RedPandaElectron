@@ -1,4 +1,5 @@
 import Dropdown from '@renderer/components/Dropdown'
+import InfoButton from '@renderer/components/InfoButton'
 import Loader from '@renderer/components/Loader'
 import { ErrorModal } from '@renderer/components/StatusModals'
 import WidgetHeader from '@renderer/components/WidgetHeader'
@@ -9,6 +10,24 @@ import { useEffect, useState } from 'react'
 const SettingsView = (): JSX.Element => {
   const [userSettings, setUserSettings] = useState<UserSettings>()
   const [errorMsg, setErrorMsg] = useState<string>('')
+  const bankPrefInfo = (
+    <table className="table mb-3">
+      <colgroup>
+        <col className="w-1/2" />
+        <col className="w-1/2" />
+      </colgroup>
+      <tbody>
+        <tr>
+          <th>Bank Australia</th>
+          <td className="text-start">Accepted bank statements will be in csv.</td>
+        </tr>
+        <tr>
+          <th>Commonwealth Bank</th>
+          <td className="text-start">Accepted bank statements will be in pdf.</td>
+        </tr>
+      </tbody>
+    </table>
+  )
 
   useEffect(() => {
     window.api
@@ -21,10 +40,14 @@ const SettingsView = (): JSX.Element => {
     <div className="widget-expanded">
       <WidgetHeader heading="Settings" />
       <table className="table">
+        <colgroup>
+          <col className="w-1/2" />
+          <col className="w-1/2" />
+        </colgroup>
         <tbody>
           <tr>
             <td>Bank Preference</td>
-            <td>
+            <td className="flex gap-6 items-center">
               <Dropdown
                 dropdownContent={userSettings?.bankPref}
                 dropdownItems={Object.values(BankType).slice(1)}
@@ -37,6 +60,7 @@ const SettingsView = (): JSX.Element => {
                 }}
                 className="w-64"
               />
+              <InfoButton headingText={'Bank Selection Information'} content={bankPrefInfo} />
             </td>
           </tr>
         </tbody>
