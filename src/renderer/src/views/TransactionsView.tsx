@@ -2,6 +2,7 @@ import { faFileImport } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getTransactions } from '@renderer/api/transactionsApi'
 import BankPreferenceModal from '@renderer/components/BankPreferenceModal'
+import Loader from '@renderer/components/Loader'
 import { ErrorModal } from '@renderer/components/StatusModals'
 import TablePagination from '@renderer/components/TablePagination'
 import TransactionsTable from '@renderer/components/TransactionsTable'
@@ -20,6 +21,7 @@ const TransactionsView = (): JSX.Element => {
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [userSettings, setUserSettings] = useState<UserSettings>()
   const [bankModalIsOpen, setBankModalOpen] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
 
   const handleTransactionAmount = (value: number): void => {
     setTransactionAmount(value)
@@ -44,54 +46,68 @@ const TransactionsView = (): JSX.Element => {
   }
 
   const getTransactionsCallback = useCallback(() => {
-    getTransactions(offset, transactionAmount).then((response: TransactionResponse) => {
-      setTransactions(response.transactions)
-      setTransactionCount(response.count)
-    })
+    setLoading(true)
+    getTransactions(offset, transactionAmount)
+      .then((response: TransactionResponse) => {
+        setTransactions(response.transactions)
+        setTransactionCount(response.count)
+        setLoading(false)
+      })
+      .catch((err: Error) => setErrorMsg(err.message))
   }, [transactionAmount, offset])
 
   useEffect(() => {
+    setLoading(true)
     window.api
       .getUserSettings()
-      .then((response: UserSettings) => setUserSettings(response))
+      .then((response: UserSettings) => {
+        setUserSettings(response)
+        setLoading(false)
+      })
       .catch((err: Error) => setErrorMsg(err.message))
   }, [])
   useEffect(() => getTransactionsCallback(), [transactionAmount, offset])
 
   return (
-    <div className="widget-expanded">
-      <WidgetHeader heading="Transactions" />
+    <>
+      {!loading ? (
+        <div className="widget-expanded">
+          <WidgetHeader heading="Transactions" />
 
-      <div className="flex justify-between items-center">
-        {transactionCount > 0 ? (
-          <TablePagination
-            offset={offset}
-            amount={transactionAmount}
-            count={transactionCount}
-            handleOffset={handleOffset}
-            handleAmount={handleTransactionAmount}
-          />
-        ) : (
-          <div />
-        )}
-        {/* Import transactions button */}
-        <button
-          className="btn btn-md"
-          onClick={(): void => {
-            if (userSettings?.bankPref === BankType.UNSPECIFIED) {
-              setBankModalOpen(true)
-            } else {
-              importTransactions()
-            }
-          }}
-        >
-          <FontAwesomeIcon icon={faFileImport} />
-        </button>
-      </div>
-      <TransactionsTable transactions={transactions} />
+          <div className="flex justify-between items-center">
+            {transactionCount > 0 ? (
+              <TablePagination
+                offset={offset}
+                amount={transactionAmount}
+                count={transactionCount}
+                handleOffset={handleOffset}
+                handleAmount={handleTransactionAmount}
+              />
+            ) : (
+              <div />
+            )}
+            {/* Import transactions button */}
+            <button
+              className="btn btn-md"
+              onClick={(): void => {
+                if (userSettings?.bankPref === BankType.UNSPECIFIED) {
+                  setBankModalOpen(true)
+                } else {
+                  importTransactions()
+                }
+              }}
+            >
+              <FontAwesomeIcon icon={faFileImport} />
+            </button>
+          </div>
+          <TransactionsTable transactions={transactions} />
+          <BankPreferenceModal open={bankModalIsOpen} handleSubmit={handleBankModalSubmit} />
+        </div>
+      ) : (
+        <Loader />
+      )}
       <ErrorModal contentText={errorMsg} handleClose={(): void => setErrorMsg('')} />
-      <BankPreferenceModal open={bankModalIsOpen} handleSubmit={handleBankModalSubmit} />
-    </div>
+    </>
   )
 }
 
