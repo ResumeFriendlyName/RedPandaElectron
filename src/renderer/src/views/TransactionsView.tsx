@@ -55,20 +55,18 @@ const TransactionsView = (): JSX.Element => {
       .then((response: TransactionResponse) => {
         setTransactions(response.transactions)
         setTransactionCount(response.count)
-        setLoading(false)
       })
       .catch((err: Error) => setErrorMsg(err.message))
+      .finally(() => setLoading(false))
   }, [transactionAmount, offset])
 
   useEffect(() => {
     setLoading(true)
     window.api
       .getUserSettings()
-      .then((response: UserSettings) => {
-        setUserSettings(response)
-        setLoading(false)
-      })
+      .then((response: UserSettings) => setUserSettings(response))
       .catch((err: Error) => setErrorMsg(err.message))
+      .finally(() => setLoading(false))
   }, [])
   useEffect(() => getTransactionsCallback(), [transactionAmount, offset])
 

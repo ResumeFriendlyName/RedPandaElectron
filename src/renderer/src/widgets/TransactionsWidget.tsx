@@ -18,11 +18,9 @@ const TransactionsWidget = (): JSX.Element => {
   useEffect(() => {
     setLoading(true)
     getTransactions(0, 5)
-      .then((response: TransactionResponse) => {
-        setTransactions(response.transactions)
-        setLoading(false)
-      })
+      .then((response: TransactionResponse) => setTransactions(response.transactions))
       .catch((err: Error) => setErrorMsg(err.message))
+      .finally(() => setLoading(false))
   }, [])
 
   return (
