@@ -43,7 +43,11 @@ const BankPreferenceModal = (props: BankPreferenceModalProps): JSX.Element => {
           <button
             className="btn btn-md"
             disabled={selectedBank === undefined}
-            onClick={(): void => props.handleSubmit(selectedBank!)}
+            onClick={(e): void => {
+              e.preventDefault()
+              // Can guarantee not null due to disabled condition
+              props.handleSubmit(selectedBank!)
+            }}
           >
             <span>Save</span>
           </button>
