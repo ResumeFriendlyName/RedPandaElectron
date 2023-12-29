@@ -91,7 +91,6 @@ const TransactionsView = (): JSX.Element => {
             <button
               className="btn btn-md"
               onClick={(): void => {
-                console.log('undo', lastImportIds)
                 setLoading(true)
                 window.api
                   .deleteTransactions(lastImportIds)
