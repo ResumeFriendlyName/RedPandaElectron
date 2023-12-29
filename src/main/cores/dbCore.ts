@@ -88,6 +88,21 @@ export async function getTransactionsCount(db: Database): Promise<number> {
   )
 }
 
+export function deleteTransactions(db: Database, ids: number[]): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    ids.map((id, index) =>
+      db.run(`DELETE FROM transactions WHERE id = ?`, [id], (_, err: Error) => {
+        if (err) {
+          reject(err)
+        }
+        if (index === ids.length - 1) {
+          resolve()
+        }
+      })
+    )
+  })
+}
+
 export async function getTransactions(
   db: Database,
   amount: number,
@@ -107,8 +122,9 @@ export async function getTransactions(
 export async function insertTransactions(
   db: Database,
   transactions: Transaction[]
-): Promise<string> {
-  return await new Promise<string>((resolve, reject) => {
+): Promise<number[]> {
+  return await new Promise<number[]>((resolve, reject) => {
+    const ids: number[] = []
     transactions.map((transaction, index) =>
       db.run(
         `INSERT INTO transactions(date, description, amount, balance) 
@@ -116,11 +132,12 @@ export async function insertTransactions(
         [transaction.date, transaction.description, transaction.amount, transaction.balance],
         function (this: RunResult, err: Error | null) {
           if (err) {
-            reject(err.message)
+            reject(err)
           } else {
+            ids.push(this.lastID)
             // Used to let the frontend know all transactions have been completed asynchronously
             if (index === transactions.length - 1) {
-              resolve('')
+              resolve(ids)
             }
           }
         }

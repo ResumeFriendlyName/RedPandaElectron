@@ -6,10 +6,12 @@ import UserSettings from '../renderer/src/models/userSettings'
 // Custom APIs for renderer
 const api = {
   /* File API */
-  importTransactions: (): Promise<void> => ipcRenderer.invoke('dialog:importTransactions'),
+  importTransactions: (): Promise<number[]> => ipcRenderer.invoke('dialog:importTransactions'),
   /* DB API */
   getTransactions: (amount: number, offset: number): Promise<TransactionResponse> =>
     ipcRenderer.invoke('db:getTransactions', amount, offset),
+  deleteTransactions: (ids: number[]): Promise<void> =>
+    ipcRenderer.invoke('db:deleteTransactions', ids),
   getUserSettings: (): Promise<UserSettings> => ipcRenderer.invoke('db:getUserSettings'),
   updateUserSettings: (userSettings: UserSettings): Promise<void> =>
     ipcRenderer.invoke('db:updateUserSettings', userSettings)

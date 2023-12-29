@@ -4,6 +4,7 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { importTransactionFiles } from './cores/dialogCore'
 import {
   closeDatabase,
+  deleteTransactions,
   getTransactions,
   getTransactionsCount,
   getUserSettings,
@@ -68,21 +69,21 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
     // Register file listener for importing CSV transaction files
     ipcMain.handle('dialog:importTransactions', () => {
-      return new Promise<void>((resolve, reject) => {
+      return new Promise<number[]>((resolve, reject) => {
         getUserSettings(db)
           .then(async (userSettings) => {
             return importTransactionFiles(window, userSettings.bankPref).then(
               async (stringTransactions) => {
                 if (stringTransactions.length > 0) {
                   return insertTransactions(db, translateBATransactions(stringTransactions)).then(
-                    () => resolve()
+                    (ids: number[]) => resolve(ids)
                   )
                 }
-                resolve()
+                resolve([])
               }
             )
           })
-          .catch((err) => reject(err))
+          .catch((err: Error) => reject(err))
       })
     })
   })
@@ -112,7 +113,15 @@ app.whenReady().then(() => {
     })
   })
 
-  ipcMain.handle('db:getUserSettings', async () => {
+  ipcMain.handle('db:deleteTransactions', (_, ids: number[]) => {
+    return new Promise<void>((resolve, reject) => {
+      deleteTransactions(db, ids)
+        .then(() => resolve())
+        .catch((err) => reject(err))
+    })
+  })
+
+  ipcMain.handle('db:getUserSettings', () => {
     return new Promise<UserSettings>((resolve, reject) => {
       getUserSettings(db)
         .then((userSettings) => resolve(userSettings))
@@ -120,7 +129,7 @@ app.whenReady().then(() => {
     })
   })
 
-  ipcMain.handle('db:updateUserSettings', async (_, userSettings: UserSettings) => {
+  ipcMain.handle('db:updateUserSettings', (_, userSettings: UserSettings) => {
     return new Promise<void>((resolve, reject) => {
       updateUserSettings(db, userSettings)
         .then(() => resolve())
