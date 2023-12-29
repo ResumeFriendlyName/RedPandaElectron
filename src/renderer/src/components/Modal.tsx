@@ -17,7 +17,7 @@ const Modal = (props: React.PropsWithChildren<ModalProps>): JSX.Element => {
   }, [props.open])
 
   return props.open ? (
-    <dialog className={`modal ${props.className}`} ref={ref}>
+    <dialog className={`modal ${props.className || ''}`} ref={ref}>
       {props.children}
     </dialog>
   ) : (
