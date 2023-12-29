@@ -13,16 +13,16 @@ const SettingsView = (): JSX.Element => {
   const bankPrefInfo = (
     <table className="table mb-3">
       <colgroup>
-        <col className="w-1/2" />
-        <col className="w-1/2" />
+        <col className="w-2/5" />
+        <col className="w-3/5" />
       </colgroup>
       <tbody>
         <tr>
-          <th>Bank Australia</th>
+          <th className="text-start">Bank Australia</th>
           <td className="text-start">Accepted bank statements will be in csv.</td>
         </tr>
         <tr>
-          <th>Commonwealth Bank</th>
+          <th className="text-start">Commonwealth Bank</th>
           <td className="text-start">Accepted bank statements will be in pdf.</td>
         </tr>
       </tbody>
@@ -60,7 +60,11 @@ const SettingsView = (): JSX.Element => {
                 }}
                 className="w-64"
               />
-              <InfoButton headingText={'Bank Selection Information'} content={bankPrefInfo} />
+              <InfoButton
+                headingText={'Bank Selection Information'}
+                content={bankPrefInfo}
+                modalClassName="w-[40rem]"
+              />
             </td>
           </tr>
         </tbody>
