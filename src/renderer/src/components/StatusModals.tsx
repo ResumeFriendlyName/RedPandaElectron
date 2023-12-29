@@ -77,7 +77,10 @@ const ErrorModal = (props: ErrorModalProps): JSX.Element => {
       open={open}
       headingText={'An error has occurred!'}
       content={<p>{props.contentText}</p>}
-      handleClose={props.handleClose}
+      handleClose={(): void => {
+        setOpen(false)
+        props.handleClose()
+      }}
       icon={faBomb}
       color="text-error"
       className="max-w-xl"
