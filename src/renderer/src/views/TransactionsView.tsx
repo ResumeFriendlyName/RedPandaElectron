@@ -30,7 +30,10 @@ const TransactionsView = (): JSX.Element => {
   const handleBankModalSubmit = (value: BankType): void => {
     setBankModalOpen(false)
     setUserSettings((prev) => ({ ...prev, bankPref: value }))
-    window.api.updateUserSettings({ bankPref: value }).then(() => importTransactions())
+    window.api
+      .updateUserSettings({ bankPref: value })
+      .then(() => importTransactions())
+      .catch((err: Error) => setErrorMsg(err.message))
   }
 
   const importTransactions = (): void => {

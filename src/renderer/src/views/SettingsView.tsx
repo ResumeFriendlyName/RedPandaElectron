@@ -54,7 +54,9 @@ const SettingsView = (): JSX.Element => {
                 handleSelect={(value: string): void => {
                   setUserSettings((prev) => {
                     const newUserSettings = { ...prev, bankPref: value as BankType }
-                    window.api.updateUserSettings(newUserSettings)
+                    window.api
+                      .updateUserSettings(newUserSettings)
+                      .catch((err: Error) => setErrorMsg(err.message))
                     return newUserSettings
                   })
                 }}
