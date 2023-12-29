@@ -6,6 +6,7 @@ import { useState } from 'react'
 interface InfoButtonProps {
   headingText: string
   content: JSX.Element
+  modalClassName?: string
 }
 
 const InfoButton = (props: InfoButtonProps): JSX.Element => {
@@ -23,6 +24,7 @@ const InfoButton = (props: InfoButtonProps): JSX.Element => {
         handleClose={(): void => {
           setOpen(false)
         }}
+        className={props.modalClassName || ''}
       />
     </>
   )

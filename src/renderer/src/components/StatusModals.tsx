@@ -12,6 +12,7 @@ interface InfoModalProps {
   open: boolean
   headingText: string
   content: JSX.Element
+  className?: string
   handleClose: () => void
 }
 
@@ -27,8 +28,8 @@ interface StatusModalProps {
 
 const GenericStatusModal = (props: StatusModalProps): JSX.Element => {
   return (
-    <Modal open={props.open}>
-      <div className={`modal-content ${props.className ? props.className : ''}`}>
+    <Modal open={props.open} className={`${props.className || ''}`}>
+      <div className={`modal-content`}>
         <FontAwesomeIcon icon={props.icon} size="2x" className={props.color} />
         <h3>{props.headingText}</h3>
         {props.content}
@@ -58,6 +59,7 @@ const InfoModal = (props: InfoModalProps): JSX.Element => {
       handleClose={props.handleClose}
       icon={faCircleInfo}
       color="text-info"
+      className={props.className || ''}
     />
   )
 }

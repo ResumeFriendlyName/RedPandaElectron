@@ -1,7 +1,12 @@
 import { ParseResult, parse } from 'papaparse'
 import { readFileSync } from 'fs'
-import { dialog } from 'electron'
+import { app, dialog } from 'electron'
 import { BankType } from '../../renderer/src/models/types'
+
+export function fatalError(message: string): void {
+  dialog.showErrorBox('FATAL ERROR', message)
+  app.quit()
+}
 
 export async function importTransactionFiles(
   browserWindow: Electron.BrowserWindow,
