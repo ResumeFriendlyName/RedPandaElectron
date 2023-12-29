@@ -91,10 +91,14 @@ const TransactionsView = (): JSX.Element => {
             <button
               className="btn btn-md"
               onClick={(): void => {
+                console.log('undo', lastImportIds)
                 setLoading(true)
                 window.api
                   .deleteTransactions(lastImportIds)
-                  .then(() => setLastImportIds([]))
+                  .then(() => {
+                    setLastImportIds([])
+                    getTransactionsCallback()
+                  })
                   .catch((err: Error) => setErrorMsg(err.message))
                   .finally(() => setLoading(false))
               }}

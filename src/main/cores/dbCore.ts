@@ -90,15 +90,17 @@ export async function getTransactionsCount(db: Database): Promise<number> {
 
 export function deleteTransactions(db: Database, ids: number[]): Promise<void> {
   return new Promise<void>((resolve, reject) => {
-    ids.map((id, index) =>
-      db.run(`DELETE FROM transactions WHERE id = ?`, [id], (_, err: Error) => {
-        if (err) {
-          reject(err)
-        }
-        if (index === ids.length - 1) {
-          resolve()
-        }
-      })
+    db.serialize(() =>
+      ids.map((id, index) =>
+        db.run(`DELETE FROM transactions WHERE id = ?`, [id], (_, err: Error) => {
+          if (err) {
+            reject(err)
+          }
+          if (index === ids.length - 1) {
+            resolve()
+          }
+        })
+      )
     )
   })
 }
@@ -125,22 +127,23 @@ export async function insertTransactions(
 ): Promise<number[]> {
   return await new Promise<number[]>((resolve, reject) => {
     const ids: number[] = []
-    transactions.map((transaction, index) =>
-      db.run(
-        `INSERT INTO transactions(date, description, amount, balance) 
-      VALUES(?, ?, ?, ?)`,
-        [transaction.date, transaction.description, transaction.amount, transaction.balance],
-        function (this: RunResult, err: Error | null) {
-          if (err) {
-            reject(err)
-          } else {
-            ids.push(this.lastID)
-            // Used to let the frontend know all transactions have been completed asynchronously
-            if (index === transactions.length - 1) {
-              resolve(ids)
+    db.serialize(() =>
+      transactions.map((transaction, index) =>
+        db.run(
+          `INSERT INTO transactions(date, description, amount, balance) VALUES(?, ?, ?, ?)`,
+          [transaction.date, transaction.description, transaction.amount, transaction.balance],
+          function (this: RunResult, err: Error | null) {
+            if (err) {
+              reject(err)
+            } else {
+              ids.push(this.lastID)
+              // Used to let the frontend know all transactions have been completed asynchronously
+              if (index === transactions.length - 1) {
+                resolve(ids)
+              }
             }
           }
-        }
+        )
       )
     )
   })
