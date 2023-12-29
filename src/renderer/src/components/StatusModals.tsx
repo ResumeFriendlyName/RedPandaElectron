@@ -1,34 +1,37 @@
-import { IconDefinition, faBomb } from '@fortawesome/free-solid-svg-icons'
+import { IconDefinition, faBomb, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useEffect, useRef } from 'react'
+import Modal from './Modal'
+import { useEffect, useState } from 'react'
 
-interface StatusModalProps {
+interface ErrorModalProps {
   contentText: string
-  open: boolean
   handleClose: () => void
 }
-interface ModalProps extends StatusModalProps {
+
+interface InfoModalProps {
+  open: boolean
   headingText: string
-  icon: IconDefinition
+  content: JSX.Element
+  handleClose: () => void
 }
 
-const Modal = (props: ModalProps): JSX.Element => {
-  const ref = useRef<HTMLDialogElement>(null)
+interface StatusModalProps {
+  open: boolean
+  headingText: string
+  content: JSX.Element
+  icon: IconDefinition
+  color: string // This should be a valid tailwind value
+  className?: string
+  handleClose: () => void
+}
 
-  useEffect(() => {
-    if (ref && ref.current !== null && props.open) {
-      ref.current.showModal()
-      return () => ref.current?.close()
-    }
-    return
-  }, [props.open])
-
-  return props.open ? (
-    <dialog className="modal max-w-xl" ref={ref} id="status_modal">
-      <div className="modal-content">
-        <FontAwesomeIcon icon={props.icon} className="text-error" size="2x" />
+const GenericStatusModal = (props: StatusModalProps): JSX.Element => {
+  return (
+    <Modal open={props.open}>
+      <div className={`modal-content ${props.className ? props.className : ''}`}>
+        <FontAwesomeIcon icon={props.icon} size="2x" className={props.color} />
         <h3>{props.headingText}</h3>
-        <p className="text-center">{props.contentText}</p>
+        {props.content}
         <form method="dialog">
           <button
             className="btn btn-sm"
@@ -42,14 +45,42 @@ const Modal = (props: ModalProps): JSX.Element => {
           </button>
         </form>
       </div>
-    </dialog>
-  ) : (
-    <></>
+    </Modal>
   )
 }
 
-const ErrorModal = (props: StatusModalProps): JSX.Element => {
-  return <Modal {...props} headingText="An error has occurred!" icon={faBomb} />
+const InfoModal = (props: InfoModalProps): JSX.Element => {
+  return (
+    <GenericStatusModal
+      open={props.open}
+      headingText={props.headingText}
+      content={props.content}
+      handleClose={props.handleClose}
+      icon={faCircleInfo}
+      color="text-info"
+    />
+  )
 }
 
-export { ErrorModal }
+const ErrorModal = (props: ErrorModalProps): JSX.Element => {
+  const [open, setOpen] = useState<boolean>(false)
+  useEffect(() => {
+    if (props.contentText !== '') {
+      setOpen(true)
+    }
+  }, [props.contentText])
+
+  return (
+    <GenericStatusModal
+      open={open}
+      headingText={'An error has occurred!'}
+      content={<p>{props.contentText}</p>}
+      handleClose={props.handleClose}
+      icon={faBomb}
+      color="text-error"
+      className="max-w-xl"
+    />
+  )
+}
+
+export { ErrorModal, InfoModal }

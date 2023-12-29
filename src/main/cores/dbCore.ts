@@ -1,6 +1,8 @@
 import { app } from 'electron'
 import { Database, RunResult } from 'sqlite3'
 import Transaction from '../../renderer/src/models/transaction'
+import UserSettings from '../../renderer/src/models/userSettings'
+import { BankType } from '../../renderer/src/models/types'
 
 export function setupDatabase(): Database {
   const appPath = app.getPath('appData') + '/' + app.getName() + '/'
@@ -15,6 +17,7 @@ export function setupDatabase(): Database {
 
   /* Create tables if not already created */
   createTransactionsTable(db)
+  createUserSettingsTable(db)
 
   return db
 }
@@ -30,6 +33,46 @@ function createTransactionsTable(db: Database): void {
     description TEXT,
     amount REAL,
     balance REAL)`)
+}
+
+function createUserSettingsTable(db: Database): void {
+  db.run(
+    `CREATE TABLE IF NOT EXISTS userSettings (
+    id INTEGER NOT NULL PRIMARY KEY,
+    bankPref TEXT NOT NULL UNIQUE
+  )`,
+    () => {
+      db.run(`INSERT INTO userSettings SELECT 1, ? WHERE NOT EXISTS (SELECT * FROM userSettings)`, [
+        BankType.UNSPECIFIED
+      ])
+    }
+  )
+}
+
+export function getUserSettings(db: Database): Promise<UserSettings> {
+  return new Promise<UserSettings>((resolve, reject) => {
+    db.get('SELECT * FROM userSettings', (err, userSettings: UserSettings) => {
+      if (err) {
+        reject(err)
+      }
+      resolve(userSettings)
+    })
+  })
+}
+
+export function updateUserSettings(db: Database, userSettings: UserSettings): Promise<void> {
+  return new Promise<void>((resolve, reject) =>
+    db.run(
+      `UPDATE userSettings SET bankPref = ? WHERE id = 1`,
+      [userSettings.bankPref],
+      (_, err: Error) => {
+        if (err) {
+          reject(err)
+        }
+        resolve()
+      }
+    )
+  )
 }
 
 export async function getTransactionsCount(db: Database): Promise<number> {

@@ -6,6 +6,9 @@
   @apply border-b-2 border-accent select-none;
 }
 
-.table tbody tr {
-  @apply rounded-md hover:bg-accent hover:text-accent-content leading-8 border-b-[1px] border-accent;
+.table tbody tr td {
+  @apply pb-2 pt-2 border-b-[1px] border-accent place-content-center;
+}
+.table.table-hover tbody tr {
+  @apply rounded-md hover:bg-accent hover:text-accent-content;
 }

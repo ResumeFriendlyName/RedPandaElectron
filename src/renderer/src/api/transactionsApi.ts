@@ -1,10 +1,7 @@
 import Transaction from '@renderer/models/transaction'
 import TransactionResponse from '@renderer/models/transactionResponse'
 
-export async function getTransactions(
-  offset: number,
-  amount: number
-): Promise<TransactionResponse> {
+async function getTransactions(offset: number, amount: number): Promise<TransactionResponse> {
   let transactions: Transaction[] = []
   let count = 0
 
@@ -18,3 +15,5 @@ export async function getTransactions(
 
   return { transactions, count }
 }
+
+export { getTransactions }
