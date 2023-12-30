@@ -38,7 +38,7 @@ const SettingsView = (): JSX.Element => {
 
   return (
     <div className="widget-expanded">
-      <WidgetHeader heading="Settings" />
+      <WidgetHeader heading="Settings" notWidget />
       {userSettings !== undefined ? (
         <table className="table">
           <colgroup>
