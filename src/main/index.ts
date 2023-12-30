@@ -5,6 +5,7 @@ import { importTransactionFiles } from './cores/dialogCore'
 import {
   closeDatabase,
   deleteTransactions,
+  getPotentialDuplicateTransactions,
   getTransactions,
   getTransactionsCount,
   getUserSettings,
@@ -16,6 +17,8 @@ import { translateBATransactions } from './cores/translationCore'
 import TransactionResponse from '../renderer/src/models/transactionResponse'
 import UserSettings from '../renderer/src/models/userSettings'
 import { Database } from 'sqlite3'
+import Transaction from '../renderer/src/models/transaction'
+import ImportTransactionResponse from '../renderer/src/models/importTransactionResponse'
 
 function createWindow(): void {
   // Create the browser window.
@@ -69,17 +72,25 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
     // Register file listener for importing CSV transaction files
     ipcMain.handle('dialog:importTransactions', () => {
-      return new Promise<number[]>((resolve, reject) => {
+      return new Promise<ImportTransactionResponse>((resolve, reject) => {
         getUserSettings(db)
           .then(async (userSettings) => {
             return importTransactionFiles(window, userSettings.bankPref).then(
               async (stringTransactions) => {
                 if (stringTransactions.length > 0) {
-                  return insertTransactions(db, translateBATransactions(stringTransactions)).then(
-                    (ids: number[]) => resolve(ids)
+                  const transactions: Transaction[] = translateBATransactions(stringTransactions)
+                  return getPotentialDuplicateTransactions(db, transactions).then(
+                    async (dupeTransactions) => {
+                      const uniqueTransactions: Transaction[] = transactions.filter(
+                        (transaction) => !dupeTransactions.includes(transaction)
+                      )
+                      return insertTransactions(db, uniqueTransactions).then(
+                        (transactionIds: number[]) => resolve({ transactionIds, dupeTransactions })
+                      )
+                    }
                   )
                 }
-                resolve([])
+                resolve({ transactionIds: [], dupeTransactions: [] })
               }
             )
           })

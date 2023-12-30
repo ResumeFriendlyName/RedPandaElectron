@@ -28,7 +28,7 @@ export function closeDatabase(db: Database): void {
 }
 
 function createTransactionsTable(db: Database): void {
-  db.run(`CREATE TABLE IF NOT EXISTS transactions ( 
+  db.run(`CREATE TABLE IF NOT EXISTS transactions (
     id INTEGER NOT NULL PRIMARY KEY,
     date TEXT NOT NULL,
     description TEXT,
@@ -74,6 +74,34 @@ export function updateUserSettings(db: Database, userSettings: UserSettings): Pr
       }
     )
   )
+}
+
+export async function getPotentialDuplicateTransactions(
+  db: Database,
+  transactions: Transaction[]
+): Promise<Transaction[]> {
+  return new Promise<Transaction[]>((resolve, reject) => {
+    const dupeTransactions: Transaction[] = []
+    db.serialize(() => {
+      transactions.map((transaction, index) => {
+        db.get(
+          `SELECT * FROM transactions WHERE date = ? AND description = ? AND amount = ? AND balance = ?`,
+          [transaction.date, transaction.description, transaction.amount, transaction.balance],
+          (err, dupeTransaction: Transaction | undefined) => {
+            if (err) {
+              reject(err)
+            }
+            if (dupeTransaction !== undefined) {
+              dupeTransactions.push(transaction)
+            }
+            if (index === transactions.length - 1) {
+              resolve(dupeTransactions)
+            }
+          }
+        )
+      })
+    })
+  })
 }
 
 export async function getTransactionsCount(db: Database): Promise<number> {
@@ -127,6 +155,11 @@ export async function insertTransactions(
 ): Promise<number[]> {
   return await new Promise<number[]>((resolve, reject) => {
     const ids: number[] = []
+
+    if (transactions.length == 0) {
+      resolve([])
+    }
+
     db.serialize(() =>
       transactions.map((transaction, index) =>
         db.run(
