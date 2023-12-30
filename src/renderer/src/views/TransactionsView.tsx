@@ -51,7 +51,6 @@ const TransactionsView = (): JSX.Element => {
     window.api
       .importTransactions()
       .then((response: ImportTransactionResponse) => {
-        setLoading(false)
         setLastImportIds(response.transactionIds)
         if (response.dupeTransactions.length) {
           setDupeModalOpen(true)
@@ -140,7 +139,11 @@ const TransactionsView = (): JSX.Element => {
         headingText="Duplicate Transactions"
         content={
           <Accordion
-            summary={`${lastImportIds.length} unique transactions were imported, ${dupeTransactions.length} duplicates were not. Expand to see duplicates`}
+            summary={`${lastImportIds.length} unique transaction${
+              lastImportIds.length == 1 ? ' was' : 's were'
+            }  imported, ${dupeTransactions.length} duplicate${
+              dupeTransactions.length == 1 ? ' was' : 's were'
+            }  not. Expand to see duplicates`}
             content={
               <table className="table table-last-borderless">
                 <tbody className="[td]:last:border-b-0">
