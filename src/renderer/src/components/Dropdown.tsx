@@ -1,3 +1,5 @@
+import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useState } from 'react'
 
 interface DropdownProps {
@@ -19,7 +21,8 @@ const Dropdown = (props: DropdownProps): JSX.Element => {
         setOpen((prev) => !prev)
       }}
     >
-      <summary className="btn btn-md">
+      <summary className="btn btn-md gap-3">
+        <FontAwesomeIcon icon={open ? faChevronUp : faChevronDown} />
         <span className="text-primary-content">{props.dropdownContent}</span>
       </summary>
       <ol className="dropdown-content text-center">

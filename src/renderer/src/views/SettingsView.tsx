@@ -37,7 +37,7 @@ const SettingsView = (): JSX.Element => {
   }, [])
 
   return (
-    <div className="widget-expanded">
+    <div className="widget-expanded self-center w-full max-w-5xl min-w-fit">
       <WidgetHeader heading="Settings" notWidget />
       {userSettings !== undefined ? (
         <table className="table">
@@ -46,8 +46,9 @@ const SettingsView = (): JSX.Element => {
             <col className="w-1/2" />
           </colgroup>
           <tbody>
+            {/* Bank preference setting */}
             <tr>
-              <td>Bank Preference</td>
+              <td className="font-semibold">Bank Preference</td>
               <td className="flex gap-6 items-center">
                 <Dropdown
                   dropdownContent={userSettings?.bankPref}

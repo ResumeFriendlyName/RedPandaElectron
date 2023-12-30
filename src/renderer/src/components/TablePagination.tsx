@@ -18,7 +18,7 @@ const TablePagination = (props: TablePaginationProps): JSX.Element => {
   )
 
   return (
-    <div className="inline-block">
+    <div className="inline-flex items-center">
       <button
         className="btn btn-md"
         onClick={(): void => props.handleOffset(props.offset - 1)}
