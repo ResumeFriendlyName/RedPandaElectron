@@ -1,0 +1,8 @@
+.accordion {
+  box-shadow: #D6D6E7 0 -3px 0 inset;
+  @apply rounded-md;
+}
+
+.accordion summary {
+  @apply select-none cursor-pointer;
+}
