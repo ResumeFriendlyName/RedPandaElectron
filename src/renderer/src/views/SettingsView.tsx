@@ -11,14 +11,14 @@ const SettingsView = (): JSX.Element => {
   const [userSettings, setUserSettings] = useState<UserSettings>()
   const [errorMsg, setErrorMsg] = useState<string>('')
   const bankPrefInfo = (
-    <table className="table mb-3">
+    <table className="table mb-3 select-none">
       <colgroup>
         <col className="w-2/5" />
         <col className="w-3/5" />
       </colgroup>
       <tbody>
         <tr>
-          <th className="text-start">Bank Australia</th>
+          <th className="text-start ">Bank Australia</th>
           <td className="text-start">Accepted bank statements will be in csv.</td>
         </tr>
         <tr>
@@ -38,7 +38,7 @@ const SettingsView = (): JSX.Element => {
 
   return (
     <div className="widget-expanded">
-      <WidgetHeader heading="Settings" />
+      <WidgetHeader heading="Settings" notWidget />
       {userSettings !== undefined ? (
         <table className="table">
           <colgroup>
