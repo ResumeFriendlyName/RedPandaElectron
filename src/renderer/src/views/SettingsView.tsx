@@ -36,45 +36,47 @@ const SettingsView = (): JSX.Element => {
       .catch((err: Error) => setErrorMsg(err.message))
   }, [])
 
-  return userSettings !== undefined ? (
+  return (
     <div className="widget-expanded">
       <WidgetHeader heading="Settings" />
-      <table className="table">
-        <colgroup>
-          <col className="w-1/2" />
-          <col className="w-1/2" />
-        </colgroup>
-        <tbody>
-          <tr>
-            <td>Bank Preference</td>
-            <td className="flex gap-6 items-center">
-              <Dropdown
-                dropdownContent={userSettings?.bankPref}
-                dropdownItems={Object.values(BankType).slice(1)}
-                handleSelect={(value: string): void => {
-                  setUserSettings((prev) => {
-                    const newUserSettings = { ...prev, bankPref: value as BankType }
-                    window.api
-                      .updateUserSettings(newUserSettings)
-                      .catch((err: Error) => setErrorMsg(err.message))
-                    return newUserSettings
-                  })
-                }}
-                className="w-64"
-              />
-              <InfoButton
-                headingText={'Bank Selection Information'}
-                content={bankPrefInfo}
-                modalClassName="w-[40rem]"
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      {userSettings !== undefined ? (
+        <table className="table">
+          <colgroup>
+            <col className="w-1/2" />
+            <col className="w-1/2" />
+          </colgroup>
+          <tbody>
+            <tr>
+              <td>Bank Preference</td>
+              <td className="flex gap-6 items-center">
+                <Dropdown
+                  dropdownContent={userSettings?.bankPref}
+                  dropdownItems={Object.values(BankType).slice(1)}
+                  handleSelect={(value: string): void => {
+                    setUserSettings((prev) => {
+                      const newUserSettings = { ...prev, bankPref: value as BankType }
+                      window.api
+                        .updateUserSettings(newUserSettings)
+                        .catch((err: Error) => setErrorMsg(err.message))
+                      return newUserSettings
+                    })
+                  }}
+                  className="w-64"
+                />
+                <InfoButton
+                  headingText={'Bank Selection Information'}
+                  content={bankPrefInfo}
+                  modalClassName="w-[40rem]"
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      ) : (
+        <Loader />
+      )}
       <ErrorModal contentText={errorMsg} handleClose={(): void => setErrorMsg('')} />
     </div>
-  ) : (
-    <Loader />
   )
 }
 

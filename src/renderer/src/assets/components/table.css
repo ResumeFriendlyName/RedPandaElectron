@@ -7,7 +7,10 @@
 }
 
 .table tbody tr td {
-  @apply pb-2 pt-2 border-b-[1px] border-accent place-content-center;
+  @apply pb-2 pt-2 border-b-[1px] px-1 border-accent place-content-center;
+}
+.table.table-last-borderless tbody tr:last-child td {
+  @apply border-b-0;
 }
 .table.table-hover tbody tr {
   @apply rounded-md hover:bg-accent hover:text-accent-content;

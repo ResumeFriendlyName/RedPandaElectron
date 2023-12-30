@@ -3,3 +3,7 @@ export enum BankType {
   BANK_AUSTRALIA = 'Bank Australia',
   COMMONWEALTH_BANK = 'Commonwealth Bank'
 }
+
+export enum SessionStorageKey {
+  LAST_TRANSACTION_IMPORT_IDS = 'lastImportTransactionIds'
+}

@@ -4,6 +4,8 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { importTransactionFiles } from './cores/dialogCore'
 import {
   closeDatabase,
+  deleteTransactions,
+  getPotentialDuplicateTransactions,
   getTransactions,
   getTransactionsCount,
   getUserSettings,
@@ -15,6 +17,8 @@ import { translateBATransactions } from './cores/translationCore'
 import TransactionResponse from '../renderer/src/models/transactionResponse'
 import UserSettings from '../renderer/src/models/userSettings'
 import { Database } from 'sqlite3'
+import Transaction from '../renderer/src/models/transaction'
+import ImportTransactionResponse from '../renderer/src/models/importTransactionResponse'
 
 function createWindow(): void {
   // Create the browser window.
@@ -68,21 +72,29 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
     // Register file listener for importing CSV transaction files
     ipcMain.handle('dialog:importTransactions', () => {
-      return new Promise<void>((resolve, reject) => {
+      return new Promise<ImportTransactionResponse>((resolve, reject) => {
         getUserSettings(db)
           .then(async (userSettings) => {
             return importTransactionFiles(window, userSettings.bankPref).then(
               async (stringTransactions) => {
                 if (stringTransactions.length > 0) {
-                  return insertTransactions(db, translateBATransactions(stringTransactions)).then(
-                    () => resolve()
+                  const transactions: Transaction[] = translateBATransactions(stringTransactions)
+                  return getPotentialDuplicateTransactions(db, transactions).then(
+                    async (dupeTransactions) => {
+                      const uniqueTransactions: Transaction[] = transactions.filter(
+                        (transaction) => !dupeTransactions.includes(transaction)
+                      )
+                      return insertTransactions(db, uniqueTransactions).then(
+                        (transactionIds: number[]) => resolve({ transactionIds, dupeTransactions })
+                      )
+                    }
                   )
                 }
-                resolve()
+                resolve({ transactionIds: [], dupeTransactions: [] })
               }
             )
           })
-          .catch((err) => reject(err))
+          .catch((err: Error) => reject(err))
       })
     })
   })
@@ -112,7 +124,15 @@ app.whenReady().then(() => {
     })
   })
 
-  ipcMain.handle('db:getUserSettings', async () => {
+  ipcMain.handle('db:deleteTransactions', (_, ids: number[]) => {
+    return new Promise<void>((resolve, reject) => {
+      deleteTransactions(db, ids)
+        .then(() => resolve())
+        .catch((err) => reject(err))
+    })
+  })
+
+  ipcMain.handle('db:getUserSettings', () => {
     return new Promise<UserSettings>((resolve, reject) => {
       getUserSettings(db)
         .then((userSettings) => resolve(userSettings))
@@ -120,7 +140,7 @@ app.whenReady().then(() => {
     })
   })
 
-  ipcMain.handle('db:updateUserSettings', async (_, userSettings: UserSettings) => {
+  ipcMain.handle('db:updateUserSettings', (_, userSettings: UserSettings) => {
     return new Promise<void>((resolve, reject) => {
       updateUserSettings(db, userSettings)
         .then(() => resolve())
