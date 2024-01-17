@@ -4,6 +4,7 @@ import Transaction from '../../renderer/src/models/transaction'
 import UserSettings from '../../renderer/src/models/userSettings'
 import { BankType } from '../../renderer/src/models/types'
 import { fatalError } from './dialogCore'
+import Tag from '../../renderer/src/models/tag'
 
 export function setupDatabase(): Database {
   const appPath = app.getPath('appData') + '/' + app.getName() + '/'
@@ -19,12 +20,28 @@ export function setupDatabase(): Database {
   /* Create tables if not already created */
   createTransactionsTable(db)
   createUserSettingsTable(db)
+  createTagsTable(db)
+  createTagsAndTransactionsTable(db)
 
   return db
 }
 
 export function closeDatabase(db: Database): void {
   db.close()
+}
+
+function createTagsAndTransactionsTable(db: Database): void {
+  db.run(`CREATE TABLE IF NOT EXISTS tagsAndtransactions (
+    id INTEGER NOT NULL PRIMARY KEY,
+    tagId INTEGER NOT NULL,
+    transactionId INTEGER NOT NULL)`)
+}
+
+function createTagsTable(db: Database): void {
+  db.run(`CREATE TABLE IF NOT EXISTS tags (
+    id INTEGER NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE)
+  `)
 }
 
 function createTransactionsTable(db: Database): void {
@@ -48,6 +65,95 @@ function createUserSettingsTable(db: Database): void {
       ])
     }
   )
+}
+
+export function getTags(db: Database): Promise<Tag[]> {
+  return new Promise<Tag[]>((resolve, reject) => {
+    db.all(`SELECT * FROM tags`, (error, rows: Tag[]) => {
+      if (error) {
+        reject(error)
+      }
+      resolve(rows)
+    })
+  })
+}
+
+export function updateTag(db: Database, tag: Tag): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    db.run(`UPDATE tags SET name = ? WHERE id = ?`, [tag.name, tag.id], (_, error: Error) => {
+      if (error) {
+        reject(error)
+      }
+      resolve()
+    })
+  })
+}
+
+export function insertTag(db: Database, tag: Tag): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    db.run(`INSERT INTO tags(name) VALUES(?)`, [tag.name], (_, error: Error) => {
+      if (error) {
+        reject(error)
+      }
+      resolve()
+    })
+  })
+}
+
+export function deleteTag(db: Database, tag: Tag): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    db.serialize(() => {
+      db.run(`DELETE FROM tags WHERE id = ?`, [tag.id], (_, error: Error) => {
+        if (error) {
+          reject(error)
+        }
+      })
+      db.run(`DELETE FROM tagsAndTransactions WHERE tagId = ?`, [tag.id], (_, error: Error) => {
+        if (error) {
+          reject(error)
+        }
+      })
+      resolve()
+    })
+  })
+}
+
+export function deleteTagAndTransaction(
+  db: Database,
+  tag: Tag,
+  transaction: Transaction
+): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    db.run(
+      `DELETE FROM tagsAndTransactions WHERE tagId = ? AND transactionId = ?`,
+      [tag.id, transaction.id],
+      (_, error: Error) => {
+        if (error) {
+          reject(error)
+        }
+        resolve()
+      }
+    )
+  })
+}
+
+export function insertTagAndTransaction(
+  db: Database,
+  tag: Tag,
+  transaction: Transaction
+): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    db.run(
+      `INSERT INTO tagsAndTransactions(tagId, transactionId) VALUES(?, ?)`,
+      [tag.id, transaction.id],
+      (_, err: Error) => {
+        if (err) {
+          reject(err)
+        }
+        resolve()
+      }
+    )
+  })
 }
 
 export function getUserSettings(db: Database): Promise<UserSettings> {
