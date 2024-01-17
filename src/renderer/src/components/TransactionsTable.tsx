@@ -1,6 +1,7 @@
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Transaction from '@renderer/models/transaction'
+import Tag from './Tag'
 
 interface TransactionsTableProps {
   transactions: Transaction[]
@@ -19,12 +20,25 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
       </thead>
       <tbody>
         {props.transactions.map((transaction) => (
-          <tr key={`tr_${transaction.id}`}>
-            <td>{transaction.date}</td>
-            <td>{transaction.description}</td>
-            <td>{transaction.amount.toLocaleString()}</td>
-            <td>{transaction.balance.toLocaleString()}</td>
-          </tr>
+          <>
+            <tr key={`tr_${transaction.id}`}>
+              <td>{transaction.date}</td>
+              <td>{transaction.description}</td>
+              <td>{transaction.amount.toLocaleString()}</td>
+              <td>{transaction.balance.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td colSpan={4}>
+                <div className="flex justify-start gap-3">
+                  <button className="btn">
+                    <span>+ Add tag</span>
+                  </button>
+                  <Tag text={'Test tag'} />
+                  <Tag text={'Test tag'} />
+                </div>
+              </td>
+            </tr>
+          </>
         ))}
       </tbody>
     </table>
