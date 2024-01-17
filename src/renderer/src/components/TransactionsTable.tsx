@@ -1,7 +1,7 @@
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Transaction from '@renderer/models/transaction'
-import Tag from './Tag'
+import TagC from './Tag'
 
 interface TransactionsTableProps {
   transactions: Transaction[]
@@ -33,8 +33,8 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
                   <button className="btn">
                     <span>+ Add tag</span>
                   </button>
-                  <Tag text={'Test tag'} />
-                  <Tag text={'Test tag'} />
+                  <TagC text={'Test tag'} />
+                  <TagC text={'Test tag'} />
                 </div>
               </td>
             </tr>
