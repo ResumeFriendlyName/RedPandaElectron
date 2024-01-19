@@ -2,23 +2,21 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { importTransactionFiles } from './cores/dialogCore'
-import {
-  closeDatabase,
-  deleteTransactions,
-  getPotentialDuplicateTransactions,
-  getTransactions,
-  getTransactionsCount,
-  getUserSettings,
-  insertTransactions,
-  setupDatabase,
-  updateUserSettings
-} from './cores/dbCore'
+import { closeDatabase, setupDatabase } from './cores/dbCore/dbCore'
 import { translateBATransactions } from './cores/translationCore'
 import TransactionResponse from '../renderer/src/models/transactionResponse'
 import UserSettings from '../renderer/src/models/userSettings'
 import { Database } from 'sqlite3'
 import Transaction from '../renderer/src/models/transaction'
 import ImportTransactionResponse from '../renderer/src/models/importTransactionResponse'
+import {
+  deleteTransactions,
+  getDuplicateTransactions,
+  getTransactions,
+  getTransactionsCount,
+  insertTransactions
+} from './cores/dbCore/dbCoreTransactions'
+import { getUserSettings, updateUserSettings } from './cores/dbCore/dbCoreUserSettings'
 
 function createWindow(): void {
   // Create the browser window.
@@ -79,7 +77,7 @@ app.whenReady().then(() => {
               async (stringTransactions) => {
                 if (stringTransactions.length > 0) {
                   const transactions: Transaction[] = translateBATransactions(stringTransactions)
-                  return getPotentialDuplicateTransactions(db, transactions).then(
+                  return getDuplicateTransactions(db, transactions).then(
                     async (dupeTransactions) => {
                       const uniqueTransactions: Transaction[] = transactions.filter(
                         (transaction) => !dupeTransactions.includes(transaction)
@@ -147,6 +145,8 @@ app.whenReady().then(() => {
         .catch((err) => reject(err))
     })
   })
+
+  // TODO: Add db tag and many table handlers
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
