@@ -68,32 +68,24 @@ app.whenReady().then(() => {
   // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
-    // Register file listener for importing CSV transaction files
-    ipcMain.handle('dialog:importTransactions', () => {
-      return new Promise<ImportTransactionResponse>((resolve, reject) => {
-        getUserSettings(db)
-          .then(async (userSettings) => {
-            return importTransactionFiles(window, userSettings.bankPref).then(
-              async (stringTransactions) => {
-                if (stringTransactions.length > 0) {
-                  const transactions: Transaction[] = translateBATransactions(stringTransactions)
-                  return getDuplicateTransactions(db, transactions).then(
-                    async (dupeTransactions) => {
-                      const uniqueTransactions: Transaction[] = transactions.filter(
-                        (transaction) => !dupeTransactions.includes(transaction)
-                      )
-                      return insertTransactions(db, uniqueTransactions).then(
-                        (transactionIds: number[]) => resolve({ transactionIds, dupeTransactions })
-                      )
-                    }
-                  )
-                }
-                resolve({ transactionIds: [], dupeTransactions: [] })
-              }
-            )
-          })
-          .catch((err: Error) => reject(err))
-      })
+
+    ipcMain.handle('dialog:importTransactions', async (): Promise<ImportTransactionResponse> => {
+      const userSettings: UserSettings = await getUserSettings(db)
+      const stringTransactions = await importTransactionFiles(window, userSettings.bankPref)
+
+      if (stringTransactions.length > 0) {
+        const transactions: Transaction[] = translateBATransactions(stringTransactions)
+        const dupeTransactions: Transaction[] = await getDuplicateTransactions(db, transactions)
+
+        const uniqueTransactions: Transaction[] = transactions.filter(
+          (transaction) => !dupeTransactions.includes(transaction)
+        )
+
+        const transactionIds: number[] = await insertTransactions(db, uniqueTransactions)
+        return { transactionIds, dupeTransactions }
+      }
+
+      return { transactionIds: [], dupeTransactions: [] }
     })
   })
 
@@ -109,44 +101,26 @@ app.whenReady().then(() => {
     closeDatabase(db)
   })
 
-  ipcMain.handle('db:getTransactions', async (_, amount: number, offset: number) => {
-    return new Promise<TransactionResponse>((resolve, reject) => {
-      getTransactions(db, amount, offset)
-        .then(async (transactions) => {
-          return getTransactionsCount(db).then((count) => {
-            const response: TransactionResponse = { transactions, count }
-            resolve(response)
-          })
-        })
-        .catch((err: Error) => reject(err))
-    })
-  })
+  ipcMain.handle(
+    'db:getTransactions',
+    async (_, amount: number, offset: number): Promise<TransactionResponse> => {
+      const transactions = await getTransactions(db, amount, offset)
+      const count = await getTransactionsCount(db)
 
-  ipcMain.handle('db:deleteTransactions', (_, ids: number[]) => {
-    return new Promise<void>((resolve, reject) => {
-      deleteTransactions(db, ids)
-        .then(() => resolve())
-        .catch((err) => reject(err))
-    })
-  })
+      return { transactions, count }
+    }
+  )
 
-  ipcMain.handle('db:getUserSettings', () => {
-    return new Promise<UserSettings>((resolve, reject) => {
-      getUserSettings(db)
-        .then((userSettings) => resolve(userSettings))
-        .catch((err) => reject(err))
-    })
-  })
+  ipcMain.handle(
+    'db:deleteTransactions',
+    (_, ids: number[]): Promise<void> => deleteTransactions(db, ids)
+  )
 
-  ipcMain.handle('db:updateUserSettings', (_, userSettings: UserSettings) => {
-    return new Promise<void>((resolve, reject) => {
-      updateUserSettings(db, userSettings)
-        .then(() => resolve())
-        .catch((err) => reject(err))
-    })
-  })
-
-  // TODO: Add db tag and many table handlers
+  ipcMain.handle('db:getUserSettings', (): Promise<UserSettings> => getUserSettings(db))
+  ipcMain.handle(
+    'db:updateUserSettings',
+    (_, userSettings: UserSettings): Promise<void> => updateUserSettings(db, userSettings)
+  )
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
