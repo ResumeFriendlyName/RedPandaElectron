@@ -1,6 +1,7 @@
 import { Database } from 'sqlite3'
 import Tag from '../../../renderer/src/models/tag'
 import Transaction from '../../../renderer/src/models/transaction'
+import TransactionWithTags from '../../../renderer/src/models/transactionWithTags'
 
 export function getTags(db: Database): Promise<Tag[]> {
   return new Promise<Tag[]>((resolve, reject) => {
@@ -49,6 +50,38 @@ export function deleteTag(db: Database, tag: Tag): Promise<void> {
         }
       })
       resolve()
+    })
+  })
+}
+
+export function getTagsWithTransactions(
+  db: Database,
+  transactions: Transaction[]
+): Promise<TransactionWithTags[]> {
+  return new Promise<TransactionWithTags[]>((resolve, reject) => {
+    db.serialize(() => {
+      const transactionsWithTags: TransactionWithTags[] = []
+      transactions.map((transaction, index) =>
+        db.all(
+          `
+            SELECT * FROM tags 
+            WHERE id IN (
+              SELECT tagId FROM tagsAndTransactions 
+              WHERE transactionId = ?
+            )`,
+          [transaction.id],
+          (err, tags: Tag[]) => {
+            if (err) {
+              reject(err)
+            }
+            transactionsWithTags.push({ transaction, tags })
+
+            if (index === transactions.length - 1) {
+              resolve(transactionsWithTags)
+            }
+          }
+        )
+      )
     })
   })
 }
