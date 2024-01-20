@@ -17,6 +17,15 @@ import {
   insertTransactions
 } from './cores/dbCore/dbCoreTransactions'
 import { getUserSettings, updateUserSettings } from './cores/dbCore/dbCoreUserSettings'
+import {
+  deleteTag,
+  deleteTagAndTransaction,
+  getTagsWithTransactions,
+  insertTag,
+  insertTagAndTransaction,
+  updateTag
+} from './cores/dbCore/dbCoreTags'
+import Tag from '../renderer/src/models/tag'
 
 function createWindow(): void {
   // Create the browser window.
@@ -105,9 +114,10 @@ app.whenReady().then(() => {
     'db:getTransactions',
     async (_, amount: number, offset: number): Promise<TransactionResponse> => {
       const transactions = await getTransactions(db, amount, offset)
+      const transactionsWithTags = await getTagsWithTransactions(db, transactions)
       const count = await getTransactionsCount(db)
 
-      return { transactions, count }
+      return { transactionsWithTags, count }
     }
   )
 
@@ -120,6 +130,20 @@ app.whenReady().then(() => {
   ipcMain.handle(
     'db:updateUserSettings',
     (_, userSettings: UserSettings): Promise<void> => updateUserSettings(db, userSettings)
+  )
+
+  ipcMain.handle('db:insertTag', (_, tag: Tag): Promise<void> => insertTag(db, tag))
+  ipcMain.handle('db:updateTag', (_, tag: Tag): Promise<void> => updateTag(db, tag))
+  ipcMain.handle(
+    'db:insertTagWithTransaction',
+    (_, tag: Tag, transaction: Transaction): Promise<void> =>
+      insertTagAndTransaction(db, tag, transaction)
+  )
+  ipcMain.handle('db:deleteTag', (_, tag: Tag): Promise<void> => deleteTag(db, tag))
+  ipcMain.handle(
+    'db:deleteTagWithTransaction',
+    (_, tag: Tag, transaction: Transaction): Promise<void> =>
+      deleteTagAndTransaction(db, tag, transaction)
   )
 })
 
