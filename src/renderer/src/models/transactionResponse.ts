@@ -1,6 +1,6 @@
-import Transaction from './transaction'
+import TransactionWithTags from './transactionWithTags'
 
 export default interface TransactionResponse {
-  transactions: Transaction[]
+  transactionsWithTags: TransactionWithTags[]
   count: number
 }

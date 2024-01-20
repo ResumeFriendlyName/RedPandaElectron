@@ -4,21 +4,21 @@ import { getTransactions } from '@renderer/api/transactionsApi'
 import Loader from '@renderer/components/Loader'
 import { ErrorModal } from '@renderer/components/StatusModals'
 import TransactionsTable from '@renderer/components/TransactionsTable'
-import Transaction from '@renderer/models/transaction'
 import TransactionResponse from '@renderer/models/transactionResponse'
+import TransactionWithTags from '@renderer/models/transactionWithTags'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const TransactionsWidget = (): JSX.Element => {
   const navigate = useNavigate()
-  const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [transactions, setTransactions] = useState<TransactionWithTags[]>([])
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     setLoading(true)
     getTransactions(0, 5)
-      .then((response: TransactionResponse) => setTransactions(response.transactions))
+      .then((response: TransactionResponse) => setTransactions(response.transactionsWithTags))
       .catch((err: Error) => setErrorMsg(err.message))
       .finally(() => setLoading(false))
   }, [])

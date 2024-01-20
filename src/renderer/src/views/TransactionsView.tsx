@@ -11,13 +11,14 @@ import WidgetHeader from '@renderer/components/WidgetHeader'
 import ImportTransactionResponse from '@renderer/models/importTransactionResponse'
 import Transaction from '@renderer/models/transaction'
 import TransactionResponse from '@renderer/models/transactionResponse'
+import TransactionWithTags from '@renderer/models/transactionWithTags'
 import { BankType, SessionStorageKey } from '@renderer/models/types'
 import UserSettings from '@renderer/models/userSettings'
 import useSessionStorage from '@renderer/utils/CustomHooks'
 import { useCallback, useEffect, useState } from 'react'
 
 const TransactionsView = (): JSX.Element => {
-  const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [transactions, setTransactions] = useState<TransactionWithTags[]>([])
   const [transactionAmount, setTransactionAmount] = useState<number>(10)
   const [transactionCount, setTransactionCount] = useState<number>(0)
   const [lastImportIds, setLastImportIds] = useSessionStorage<number[]>(
@@ -78,7 +79,9 @@ const TransactionsView = (): JSX.Element => {
     setLoading(true)
     getTransactions(offset, transactionAmount)
       .then((response: TransactionResponse) => {
-        setTransactions(response.transactions)
+        console.log('yoyo', response)
+        setTransactions(response.transactionsWithTags)
+
         setTransactionCount(response.count)
       })
       .catch((err: Error) => setErrorMsg(err.message))

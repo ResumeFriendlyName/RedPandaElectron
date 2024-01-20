@@ -1,10 +1,10 @@
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import Transaction from '@renderer/models/transaction'
 import TagC from './Tag'
+import TransactionWithTags from '@renderer/models/transactionWithTags'
 
 interface TransactionsTableProps {
-  transactions: Transaction[]
+  transactions: TransactionWithTags[]
 }
 
 const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
@@ -21,11 +21,11 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
       <tbody>
         {props.transactions.map((transaction) => (
           <>
-            <tr key={`tr_${transaction.id}`}>
-              <td>{transaction.date}</td>
-              <td>{transaction.description}</td>
-              <td>{transaction.amount.toLocaleString()}</td>
-              <td>{transaction.balance.toLocaleString()}</td>
+            <tr key={`tr_${transaction.transaction.id}`}>
+              <td>{transaction.transaction.date}</td>
+              <td>{transaction.transaction.description}</td>
+              <td>{transaction.transaction.amount.toLocaleString()}</td>
+              <td>{transaction.transaction.balance.toLocaleString()}</td>
             </tr>
             <tr>
               <td colSpan={4}>
@@ -33,8 +33,9 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
                   <button className="btn">
                     <span>+ Add tag</span>
                   </button>
-                  <TagC text={'Test tag'} />
-                  <TagC text={'Test tag'} />
+                  {transaction.tags.map((tag) => (
+                    <TagC key={`td_${transaction.transaction.id}_${tag.id}`} text={tag.name} />
+                  ))}
                 </div>
               </td>
             </tr>
