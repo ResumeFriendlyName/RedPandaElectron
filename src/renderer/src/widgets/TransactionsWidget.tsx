@@ -1,6 +1,5 @@
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { getTransactions } from '@renderer/api/transactionsApi'
 import Loader from '@renderer/components/Loader'
 import { ErrorModal } from '@renderer/components/StatusModals'
 import TransactionsTable from '@renderer/components/TransactionsTable'
@@ -17,7 +16,8 @@ const TransactionsWidget = (): JSX.Element => {
 
   useEffect(() => {
     setLoading(true)
-    getTransactions(0, 5)
+    window.api
+      .getTransactions(5, 0)
       .then((response: TransactionResponse) => setTransactions(response.transactionsWithTags))
       .catch((err: Error) => setErrorMsg(err.message))
       .finally(() => setLoading(false))
@@ -31,7 +31,11 @@ const TransactionsWidget = (): JSX.Element => {
           <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
         </button>
       </div>
-      {!loading ? <TransactionsTable transactions={transactions} /> : <Loader />}
+      {!loading ? (
+        <TransactionsTable transactions={transactions} hideTags handleTagDelete={(): void => {}} />
+      ) : (
+        <Loader />
+      )}
       <ErrorModal contentText={errorMsg} handleClose={(): void => setErrorMsg('')} />
     </div>
   )

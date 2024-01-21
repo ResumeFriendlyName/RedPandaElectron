@@ -1,6 +1,5 @@
 import { faFileImport, faRotateLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { getTransactions } from '@renderer/api/transactionsApi'
 import Accordion from '@renderer/components/Accordion'
 import BankPreferenceModal from '@renderer/components/BankPreferenceModal'
 import Loader from '@renderer/components/Loader'
@@ -57,7 +56,7 @@ const TransactionsView = (): JSX.Element => {
           setDupeModalOpen(true)
           setDupeTransactions(response.dupeTransactions)
         } else {
-          getTransactionsCallback()
+          getTransactions()
         }
       })
       .catch((err: Error) => setErrorMsg(err.message))
@@ -69,19 +68,25 @@ const TransactionsView = (): JSX.Element => {
       .deleteTransactions(ids)
       .then(() => {
         setLastImportIds([])
-        getTransactionsCallback()
+        getTransactions()
       })
       .catch((err: Error) => setErrorMsg(err.message))
       .finally(() => setLoading(false))
   }
-
-  const getTransactionsCallback = useCallback(() => {
+  const deleteTag = (id: number): void => {
     setLoading(true)
-    getTransactions(offset, transactionAmount)
-      .then((response: TransactionResponse) => {
-        console.log('yoyo', response)
-        setTransactions(response.transactionsWithTags)
+    window.api
+      .deleteTag(id)
+      .then(() => setLoading(false))
+      .catch((err: Error) => setErrorMsg(err.message))
+  }
 
+  const getTransactions = useCallback(() => {
+    setLoading(true)
+    window.api
+      .getTransactions(transactionAmount, offset)
+      .then((response: TransactionResponse) => {
+        setTransactions(response.transactionsWithTags)
         setTransactionCount(response.count)
       })
       .catch((err: Error) => setErrorMsg(err.message))
@@ -96,7 +101,7 @@ const TransactionsView = (): JSX.Element => {
       .catch((err: Error) => setErrorMsg(err.message))
       .finally(() => setLoading(false))
   }, [])
-  useEffect(() => getTransactionsCallback(), [transactionAmount, offset])
+  useEffect(() => getTransactions(), [transactionAmount, offset])
 
   return (
     <div className="widget-expanded">
@@ -135,7 +140,11 @@ const TransactionsView = (): JSX.Element => {
           </button>
         </div>
       </div>
-      {!loading ? <TransactionsTable transactions={transactions} /> : <Loader />}
+      {!loading ? (
+        <TransactionsTable transactions={transactions} handleTagDelete={deleteTag} />
+      ) : (
+        <Loader />
+      )}
       <BankPreferenceModal open={bankModalIsOpen} handleSubmit={handleBankModalSubmit} />
       <InfoModal
         open={dupeModalIsOpen}
