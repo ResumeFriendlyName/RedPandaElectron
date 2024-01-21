@@ -6,7 +6,7 @@ interface TagProps {
   onDelete: () => void
 }
 
-const TagC = (props: TagProps): JSX.Element => {
+const TagChip = (props: TagProps): JSX.Element => {
   return (
     <div className="tag flex items-center gap-1">
       <button className="btn btn-xs" onClick={(): void => props.onDelete()}>
@@ -17,4 +17,4 @@ const TagC = (props: TagProps): JSX.Element => {
   )
 }
 
-export default TagC
+export default TagChip
