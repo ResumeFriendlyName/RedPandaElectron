@@ -2,6 +2,14 @@
   @apply inline-block relative;
 }
 
+.dropdown .summary::marker {
+  content: "";
+}
+
+.dropdown .summary svg {
+  @apply text-secondary;
+}
+
 .dropdown .btn {
   @apply cursor-pointer select-none w-full;
 }

@@ -23,7 +23,7 @@ const Dropdown = (props: DropdownProps): JSX.Element => {
         setOpen((prev) => !prev)
       }}
     >
-      <summary className={`btn btn-${props.size} gap-3`}>
+      <summary className={`summary btn btn-${props.size} gap-3`}>
         <FontAwesomeIcon icon={open ? faChevronUp : faChevronDown} />
         <span className="text-primary-content">{props.dropdownContent}</span>
       </summary>
