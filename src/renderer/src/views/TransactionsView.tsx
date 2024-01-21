@@ -8,6 +8,7 @@ import TablePagination from '@renderer/components/TablePagination'
 import TransactionsTable from '@renderer/components/TransactionsTable'
 import WidgetHeader from '@renderer/components/WidgetHeader'
 import ImportTransactionResponse from '@renderer/models/importTransactionResponse'
+import Tag from '@renderer/models/tag'
 import Transaction from '@renderer/models/transaction'
 import TransactionResponse from '@renderer/models/transactionResponse'
 import TransactionWithTags from '@renderer/models/transactionWithTags'
@@ -82,6 +83,15 @@ const TransactionsView = (): JSX.Element => {
       .finally(() => setLoading(false))
   }
 
+  const handleTagAddToTransaction = (tag: Tag, transaction: Transaction): void => {
+    setLoading(true)
+    window.api
+      .insertTagWithTransaction(tag, transaction)
+      .then(() => getTransactions())
+      .catch((err: Error) => setErrorMsg(err.message))
+      .finally(() => setLoading(false))
+  }
+
   const getTransactions = useCallback(() => {
     setLoading(true)
     window.api
@@ -145,6 +155,7 @@ const TransactionsView = (): JSX.Element => {
         <TransactionsTable
           transactionsWithTags={transactionsWithTags}
           handleTagDelete={deleteTag}
+          handleTagAddToTransaction={handleTagAddToTransaction}
         />
       ) : (
         <Loader />

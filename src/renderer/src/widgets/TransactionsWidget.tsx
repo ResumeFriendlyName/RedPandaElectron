@@ -35,6 +35,7 @@ const TransactionsWidget = (): JSX.Element => {
         <TransactionsTable
           transactionsWithTags={transactionsWithTags}
           hideTags
+          handleTagAddToTransaction={(): void => {}}
           handleTagDelete={(): void => {}}
         />
       ) : (
