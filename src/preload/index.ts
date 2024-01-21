@@ -3,6 +3,8 @@ import { electronAPI } from '@electron-toolkit/preload'
 import TransactionResponse from '../renderer/src/models/transactionResponse'
 import UserSettings from '../renderer/src/models/userSettings'
 import ImportTransactionResponse from '../renderer/src/models/importTransactionResponse'
+import Tag from '../renderer/src/models/tag'
+import Transaction from '../renderer/src/models/transaction'
 
 // Custom APIs for renderer
 const api = {
@@ -19,7 +21,10 @@ const api = {
   updateUserSettings: (userSettings: UserSettings): Promise<void> =>
     ipcRenderer.invoke('db:updateUserSettings', userSettings),
   /* Tag API */
-  deleteTag: (id: number): Promise<void> => ipcRenderer.invoke('db:deleteTag', id)
+  deleteTag: (id: number): Promise<void> => ipcRenderer.invoke('db:deleteTag', id),
+  getTags: (): Promise<Tag[]> => ipcRenderer.invoke('db:getTags'),
+  insertTagWithTransaction: (tag: Tag, transaction: Transaction): Promise<void> =>
+    ipcRenderer.invoke('db:insertTagWithTransaction', tag, transaction)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

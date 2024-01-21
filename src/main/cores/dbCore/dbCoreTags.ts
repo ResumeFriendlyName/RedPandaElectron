@@ -1,4 +1,4 @@
-import { Database } from 'sqlite3'
+import { Database, RunResult } from 'sqlite3'
 import Tag from '../../../renderer/src/models/tag'
 import Transaction from '../../../renderer/src/models/transaction'
 import TransactionWithTags from '../../../renderer/src/models/transactionWithTags'
@@ -25,14 +25,18 @@ export function updateTag(db: Database, tag: Tag): Promise<void> {
   })
 }
 
-export function insertTag(db: Database, tag: Tag): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
-    db.run(`INSERT INTO tags(name) VALUES(?)`, [tag.name], (_, error: Error) => {
-      if (error) {
-        reject(error)
+export function insertTag(db: Database, tag: Tag): Promise<number> {
+  return new Promise<number>((resolve, reject) => {
+    db.run(
+      `INSERT INTO tags(name) VALUES(?)`,
+      [tag.name],
+      function (this: RunResult, error: Error) {
+        if (error) {
+          reject(error)
+        }
+        resolve(this.lastID)
       }
-      resolve()
-    })
+    )
   })
 }
 
@@ -111,13 +115,13 @@ export function deleteTagAndTransaction(
 
 export function insertTagAndTransaction(
   db: Database,
-  tag: Tag,
-  transaction: Transaction
+  tagId: number,
+  transactionId: number
 ): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     db.run(
       `INSERT INTO tagsAndTransactions(tagId, transactionId) VALUES(?, ?)`,
-      [tag.id, transaction.id],
+      [tagId, transactionId],
       (_, err: Error) => {
         if (err) {
           reject(err)

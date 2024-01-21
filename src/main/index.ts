@@ -20,6 +20,7 @@ import { getUserSettings, updateUserSettings } from './cores/dbCore/dbCoreUserSe
 import {
   deleteTag,
   deleteTagAndTransaction,
+  getTags,
   getTagsWithTransactions,
   insertTag,
   insertTagAndTransaction,
@@ -135,12 +136,17 @@ app.whenReady().then(() => {
     (_, userSettings: UserSettings): Promise<void> => updateUserSettings(db, userSettings)
   )
 
-  ipcMain.handle('db:insertTag', (_, tag: Tag): Promise<void> => insertTag(db, tag))
+  ipcMain.handle('db:getTags', (): Promise<Tag[]> => getTags(db))
+  ipcMain.handle('db:insertTag', (_, tag: Tag): Promise<number> => insertTag(db, tag))
   ipcMain.handle('db:updateTag', (_, tag: Tag): Promise<void> => updateTag(db, tag))
   ipcMain.handle(
     'db:insertTagWithTransaction',
-    (_, tag: Tag, transaction: Transaction): Promise<void> =>
-      insertTagAndTransaction(db, tag, transaction)
+    async (_, tag: Tag, transaction: Transaction): Promise<void> => {
+      if (tag.id == -1) {
+        tag.id = await insertTag(db, tag)
+      }
+      return insertTagAndTransaction(db, tag.id, transaction.id)
+    }
   )
   ipcMain.handle('db:deleteTag', (_, id: number): Promise<void> => deleteTag(db, id))
   ipcMain.handle(
