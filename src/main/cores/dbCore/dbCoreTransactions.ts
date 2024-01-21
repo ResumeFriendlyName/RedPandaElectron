@@ -6,6 +6,10 @@ export async function getDuplicateTransactions(
   transactions: Transaction[]
 ): Promise<Transaction[]> {
   return new Promise<Transaction[]>((resolve, reject) => {
+    if (transactions.length == 0) {
+      resolve([])
+    }
+
     const dupeTransactions: Transaction[] = []
     db.serialize(() => {
       transactions.map((transaction, index) => {
@@ -43,6 +47,10 @@ export async function getTransactionsCount(db: Database): Promise<number> {
 
 export function deleteTransactions(db: Database, ids: number[]): Promise<void> {
   return new Promise<void>((resolve, reject) => {
+    if (ids.length == 0) {
+      resolve()
+    }
+
     db.serialize(() =>
       ids.map((id, index) =>
         db.run(`DELETE FROM transactions WHERE id = ?`, [id], (_, err: Error) => {
@@ -79,12 +87,11 @@ export async function insertTransactions(
   transactions: Transaction[]
 ): Promise<number[]> {
   return await new Promise<number[]>((resolve, reject) => {
-    const ids: number[] = []
-
     if (transactions.length == 0) {
       resolve([])
     }
 
+    const ids: number[] = []
     db.serialize(() =>
       transactions.map((transaction, index) =>
         db.run(
