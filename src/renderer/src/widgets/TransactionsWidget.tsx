@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom'
 
 const TransactionsWidget = (): JSX.Element => {
   const navigate = useNavigate()
-  const [transactions, setTransactions] = useState<TransactionWithTags[]>([])
+  const [transactionsWithTags, setTransactions] = useState<TransactionWithTags[]>([])
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(true)
 
@@ -32,7 +32,11 @@ const TransactionsWidget = (): JSX.Element => {
         </button>
       </div>
       {!loading ? (
-        <TransactionsTable transactions={transactions} hideTags handleTagDelete={(): void => {}} />
+        <TransactionsTable
+          transactionsWithTags={transactionsWithTags}
+          hideTags
+          handleTagDelete={(): void => {}}
+        />
       ) : (
         <Loader />
       )}
