@@ -1,7 +1,7 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import ImportTransactionResponse from '@renderer/models/importTransactionResponse'
-import TransactionResponse from '@renderer/models/transactionResponse'
-import UserSettings from '@renderer/models/userSettings'
+import TransactionResponse from '../renderer/src/models/transactionResponse'
+import UserSettings from '../renderer/src/models/userSettings'
+import ImportTransactionResponse from '../renderer/src/models/importTransactionResponse'
 
 interface API {
   importTransactions: () => Promise<ImportTransactionResponse>
