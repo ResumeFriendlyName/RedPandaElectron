@@ -1,12 +1,16 @@
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import TagC from './Tag'
+import TagChip from './TagChip'
 import TransactionWithTags from '@renderer/models/transactionWithTags'
 import { Fragment } from 'react'
+import AddTagButton from './AddTagButton'
+import Tag from '@renderer/models/tag'
+import Transaction from '@renderer/models/transaction'
 
 interface TransactionsTableProps {
   transactionsWithTags: TransactionWithTags[]
   hideTags?: boolean
+  handleTagAddToTransaction: (tag: Tag, transaction: Transaction) => void
   handleTagDelete: (tagId: number) => void
 }
 
@@ -35,11 +39,13 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
                 <tr>
                   <td colSpan={4}>
                     <div className="flex justify-start gap-3">
-                      <button className="btn btn-sm">
-                        <span>+ Add tag</span>
-                      </button>
+                      <AddTagButton
+                        handleSelect={(tag: Tag): void =>
+                          props.handleTagAddToTransaction(tag, transactionWithTag.transaction)
+                        }
+                      />
                       {transactionWithTag.tags.map((tag) => (
-                        <TagC
+                        <TagChip
                           key={`td_${transactionWithTag.transaction.id}_${tag.id}_${tag.name}`}
                           text={tag.name}
                           onDelete={(): void => props.handleTagDelete(tag.id)}
