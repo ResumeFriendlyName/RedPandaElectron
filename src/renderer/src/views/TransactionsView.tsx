@@ -17,7 +17,7 @@ import useSessionStorage from '@renderer/utils/CustomHooks'
 import { useCallback, useEffect, useState } from 'react'
 
 const TransactionsView = (): JSX.Element => {
-  const [transactions, setTransactions] = useState<TransactionWithTags[]>([])
+  const [transactionsWithTags, setTransactions] = useState<TransactionWithTags[]>([])
   const [transactionAmount, setTransactionAmount] = useState<number>(10)
   const [transactionCount, setTransactionCount] = useState<number>(0)
   const [lastImportIds, setLastImportIds] = useSessionStorage<number[]>(
@@ -73,12 +73,13 @@ const TransactionsView = (): JSX.Element => {
       .catch((err: Error) => setErrorMsg(err.message))
       .finally(() => setLoading(false))
   }
-  const deleteTag = (id: number): void => {
+  const deleteTag = (tagId: number): void => {
     setLoading(true)
     window.api
-      .deleteTag(id)
-      .then(() => setLoading(false))
+      .deleteTag(tagId)
+      .then(() => getTransactions())
       .catch((err: Error) => setErrorMsg(err.message))
+      .finally(() => setLoading(false))
   }
 
   const getTransactions = useCallback(() => {
@@ -141,7 +142,10 @@ const TransactionsView = (): JSX.Element => {
         </div>
       </div>
       {!loading ? (
-        <TransactionsTable transactions={transactions} handleTagDelete={deleteTag} />
+        <TransactionsTable
+          transactionsWithTags={transactionsWithTags}
+          handleTagDelete={deleteTag}
+        />
       ) : (
         <Loader />
       )}
