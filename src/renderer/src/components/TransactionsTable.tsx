@@ -5,13 +5,13 @@ import TransactionWithTags from '@renderer/models/transactionWithTags'
 import { Fragment } from 'react'
 
 interface TransactionsTableProps {
-  transactions: TransactionWithTags[]
+  transactionsWithTags: TransactionWithTags[]
   hideTags?: boolean
-  handleTagDelete: (id: number) => void
+  handleTagDelete: (tagId: number) => void
 }
 
 const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
-  return props.transactions.length ? (
+  return props.transactionsWithTags.length ? (
     <>
       <table className="table table-hover w-full text-primary-content">
         <thead>
@@ -23,13 +23,13 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
           </tr>
         </thead>
         <tbody>
-          {props.transactions.map((transaction) => (
-            <Fragment key={`transaction_${transaction.transaction.id}`}>
+          {props.transactionsWithTags.map((transactionWithTag) => (
+            <Fragment key={`transaction_${transactionWithTag.transaction.id}`}>
               <tr>
-                <td>{transaction.transaction.date}</td>
-                <td>{transaction.transaction.description}</td>
-                <td>{transaction.transaction.amount.toLocaleString()}</td>
-                <td>{transaction.transaction.balance.toLocaleString()}</td>
+                <td>{transactionWithTag.transaction.date}</td>
+                <td>{transactionWithTag.transaction.description}</td>
+                <td>{transactionWithTag.transaction.amount.toLocaleString()}</td>
+                <td>{transactionWithTag.transaction.balance.toLocaleString()}</td>
               </tr>
               {!props.hideTags && (
                 <tr>
@@ -38,9 +38,9 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
                       <button className="btn btn-sm">
                         <span>+ Add tag</span>
                       </button>
-                      {transaction.tags.map((tag) => (
+                      {transactionWithTag.tags.map((tag) => (
                         <TagC
-                          key={`td_${transaction.transaction.id}_${tag.id}_${tag.name}`}
+                          key={`td_${transactionWithTag.transaction.id}_${tag.id}_${tag.name}`}
                           text={tag.name}
                           onDelete={(): void => props.handleTagDelete(tag.id)}
                         />
