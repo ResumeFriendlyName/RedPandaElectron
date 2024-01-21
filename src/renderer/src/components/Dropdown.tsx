@@ -1,10 +1,12 @@
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { ComponentSize } from '@renderer/models/types'
 import { useState } from 'react'
 
 interface DropdownProps {
   dropdownContent: string
   dropdownItems: string[]
+  size: ComponentSize
   className?: string
   handleSelect: (value: string) => void
 }
@@ -21,7 +23,7 @@ const Dropdown = (props: DropdownProps): JSX.Element => {
         setOpen((prev) => !prev)
       }}
     >
-      <summary className="btn btn-md gap-3">
+      <summary className={`btn btn-${props.size} gap-3`}>
         <FontAwesomeIcon icon={open ? faChevronUp : faChevronDown} />
         <span className="text-primary-content">{props.dropdownContent}</span>
       </summary>

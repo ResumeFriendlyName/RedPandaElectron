@@ -3,7 +3,7 @@ import InfoButton from '@renderer/components/InfoButton'
 import Loader from '@renderer/components/Loader'
 import { ErrorModal } from '@renderer/components/StatusModals'
 import WidgetHeader from '@renderer/components/WidgetHeader'
-import { BankType } from '@renderer/models/types'
+import { BankType, ComponentSize } from '@renderer/models/types'
 import UserSettings from '@renderer/models/userSettings'
 import { useEffect, useState } from 'react'
 
@@ -53,6 +53,7 @@ const SettingsView = (): JSX.Element => {
                 <Dropdown
                   dropdownContent={userSettings?.bankPref}
                   dropdownItems={Object.values(BankType).slice(1)}
+                  size={ComponentSize.MD}
                   handleSelect={(value: string): void => {
                     setUserSettings((prev) => {
                       const newUserSettings = { ...prev, bankPref: value as BankType }

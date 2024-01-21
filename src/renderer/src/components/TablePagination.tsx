@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Dropdown from './Dropdown'
+import { ComponentSize } from '@renderer/models/types'
 
 interface TablePaginationProps {
   offset: number
@@ -29,6 +30,7 @@ const TablePagination = (props: TablePaginationProps): JSX.Element => {
       <Dropdown
         dropdownContent={`Page ${props.offset + 1} of ${pageCount} (${props.amount})`}
         dropdownItems={['5', '10', '25', '50', '100']}
+        size={ComponentSize.MD}
         handleSelect={(value: string): void => props.handleAmount(Number(value))}
       />
       <button
