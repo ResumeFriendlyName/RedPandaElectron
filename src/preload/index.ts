@@ -6,17 +6,20 @@ import ImportTransactionResponse from '../renderer/src/models/importTransactionR
 
 // Custom APIs for renderer
 const api = {
-  /* File API */
+  /* Dialog API */
   importTransactions: (): Promise<ImportTransactionResponse> =>
     ipcRenderer.invoke('dialog:importTransactions'),
-  /* DB API */
+  /* Transactions API */
   getTransactions: (amount: number, offset: number): Promise<TransactionResponse> =>
-    ipcRenderer.invoke('db:getTransactions', amount, offset),
+    ipcRenderer.invoke('db:getTransactions', amount, offset * amount),
   deleteTransactions: (ids: number[]): Promise<void> =>
     ipcRenderer.invoke('db:deleteTransactions', ids),
+  /* UserSettings API */
   getUserSettings: (): Promise<UserSettings> => ipcRenderer.invoke('db:getUserSettings'),
   updateUserSettings: (userSettings: UserSettings): Promise<void> =>
-    ipcRenderer.invoke('db:updateUserSettings', userSettings)
+    ipcRenderer.invoke('db:updateUserSettings', userSettings),
+  /* Tag API */
+  deleteTag: (id: number): Promise<void> => ipcRenderer.invoke('db:deleteTag', id)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

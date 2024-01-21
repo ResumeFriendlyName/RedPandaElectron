@@ -117,7 +117,10 @@ app.whenReady().then(() => {
       const transactionsWithTags = await getTagsWithTransactions(db, transactions)
       const count = await getTransactionsCount(db)
 
-      return { transactionsWithTags, count }
+      return {
+        transactionsWithTags,
+        count
+      }
     }
   )
 
@@ -139,11 +142,11 @@ app.whenReady().then(() => {
     (_, tag: Tag, transaction: Transaction): Promise<void> =>
       insertTagAndTransaction(db, tag, transaction)
   )
-  ipcMain.handle('db:deleteTag', (_, tag: Tag): Promise<void> => deleteTag(db, tag))
+  ipcMain.handle('db:deleteTag', (_, id: number): Promise<void> => deleteTag(db, id))
   ipcMain.handle(
     'db:deleteTagWithTransaction',
-    (_, tag: Tag, transaction: Transaction): Promise<void> =>
-      deleteTagAndTransaction(db, tag, transaction)
+    (_, tagId: number, transactionId: number): Promise<void> =>
+      deleteTagAndTransaction(db, tagId, transactionId)
   )
 })
 

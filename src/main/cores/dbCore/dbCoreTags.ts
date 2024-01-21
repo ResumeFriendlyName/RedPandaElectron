@@ -36,15 +36,15 @@ export function insertTag(db: Database, tag: Tag): Promise<void> {
   })
 }
 
-export function deleteTag(db: Database, tag: Tag): Promise<void> {
+export function deleteTag(db: Database, id: number): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     db.serialize(() => {
-      db.run(`DELETE FROM tags WHERE id = ?`, [tag.id], (_, error: Error) => {
+      db.run(`DELETE FROM tags WHERE id = ?`, [id], (_, error: Error) => {
         if (error) {
           reject(error)
         }
       })
-      db.run(`DELETE FROM tagsAndTransactions WHERE tagId = ?`, [tag.id], (_, error: Error) => {
+      db.run(`DELETE FROM tagsAndTransactions WHERE tagId = ?`, [id], (_, error: Error) => {
         if (error) {
           reject(error)
         }
@@ -59,6 +59,10 @@ export function getTagsWithTransactions(
   transactions: Transaction[]
 ): Promise<TransactionWithTags[]> {
   return new Promise<TransactionWithTags[]>((resolve, reject) => {
+    if (transactions.length == 0) {
+      resolve([])
+    }
+
     db.serialize(() => {
       const transactionsWithTags: TransactionWithTags[] = []
       transactions.map((transaction, index) =>
@@ -74,8 +78,8 @@ export function getTagsWithTransactions(
             if (err) {
               reject(err)
             }
-            transactionsWithTags.push({ transaction, tags })
 
+            transactionsWithTags.push({ transaction, tags })
             if (index === transactions.length - 1) {
               resolve(transactionsWithTags)
             }
@@ -88,13 +92,13 @@ export function getTagsWithTransactions(
 
 export function deleteTagAndTransaction(
   db: Database,
-  tag: Tag,
-  transaction: Transaction
+  tagId: number,
+  transactionId: number
 ): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     db.run(
       `DELETE FROM tagsAndTransactions WHERE tagId = ? AND transactionId = ?`,
-      [tag.id, transaction.id],
+      [tagId, transactionId],
       (_, error: Error) => {
         if (error) {
           reject(error)
