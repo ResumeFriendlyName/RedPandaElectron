@@ -58,7 +58,12 @@ const InputDropdown = (props: InputDropdownProps): JSX.Element => {
             </li>
           ))
         ) : (
-          <li onMouseDown={(e): void => handleSelect(e, props.input)}>{props.input}</li>
+          <li
+            className="badge after:content-['NEW']"
+            onMouseDown={(e): void => handleSelect(e, props.input)}
+          >
+            {props.input}
+          </li>
         )}
       </ol>
     </details>
