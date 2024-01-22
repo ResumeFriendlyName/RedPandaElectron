@@ -23,6 +23,11 @@ const Dropdown = (props: DropdownProps): JSX.Element => {
         setOpen((prev) => !prev)
       }}
       onBlur={(): void => setOpen(false)}
+      onKeyDown={(e): void => {
+        if (e.key === 'Escape') {
+          setOpen(false)
+        }
+      }}
     >
       <summary className={`summary btn btn-${props.size} gap-3`}>
         <FontAwesomeIcon icon={open ? faChevronUp : faChevronDown} />

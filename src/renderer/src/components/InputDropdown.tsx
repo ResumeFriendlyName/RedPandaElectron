@@ -27,6 +27,11 @@ const InputDropdown = (props: InputDropdownProps): JSX.Element => {
       className={`dropdown ${props.className ? props.className : ''}`}
       open={open}
       onBlur={(): void => setOpen(false)}
+      onKeyDown={(e): void => {
+        if (e.key === 'Escape') {
+          setOpen(false)
+        }
+      }}
     >
       <summary className="summary">
         <FontAwesomeIcon icon={open ? faChevronUp : faChevronDown} />
