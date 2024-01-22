@@ -1,7 +1,7 @@
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ComponentSize } from '@renderer/models/types'
-import { ChangeEvent, useState } from 'react'
+import { useState } from 'react'
 
 interface InputDropdownProps {
   input: string
@@ -41,7 +41,12 @@ const InputDropdown = (props: InputDropdownProps): JSX.Element => {
           placeholder={props.placeholder}
           // Reopen options if mouse left and returned to app while focused
           onFocus={(): void => setOpen(true)}
-          onChange={(e: ChangeEvent<HTMLInputElement>): void => props.handleInput(e.target.value)}
+          onChange={(e): void => props.handleInput(e.target.value)}
+          onKeyDown={(e): void => {
+            if (e.key === 'Enter') {
+              props.handleSelect(props.input)
+            }
+          }}
         />
       </summary>
 
