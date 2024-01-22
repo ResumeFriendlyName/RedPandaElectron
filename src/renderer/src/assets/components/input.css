@@ -1,3 +1,11 @@
 .input {
-  @apply text-primary-content px-2 border-2 rounded-md;
+  @apply text-primary-content border-2 border-accent rounded-md;
+}
+
+.input-icon {
+  @apply relative;
+}
+
+.input-icon i {
+  @apply absolute left-2 top-0.5;
 }

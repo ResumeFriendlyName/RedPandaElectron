@@ -34,25 +34,29 @@ const InputDropdown = (props: InputDropdownProps): JSX.Element => {
       }}
     >
       <summary className="summary">
-        <FontAwesomeIcon icon={open ? faChevronUp : faChevronDown} />
-        <input
-          className="input text-center"
-          type="text"
-          onClick={(e): void => {
-            e.preventDefault()
-            setOpen(true)
-          }}
-          value={props.input}
-          placeholder={props.placeholder}
-          // Reopen options if mouse left and returned to app while focused
-          onFocus={(): void => setOpen(true)}
-          onChange={(e): void => props.handleInput(e.target.value)}
-          onKeyDown={(e): void => {
-            if (e.key === 'Enter') {
-              props.handleSelect(props.input)
-            }
-          }}
-        />
+        <div className="input-icon">
+          <i>
+            <FontAwesomeIcon icon={open ? faChevronUp : faChevronDown} />
+          </i>
+          <input
+            className="input text-center"
+            type="text"
+            onClick={(e): void => {
+              e.preventDefault()
+              setOpen(true)
+            }}
+            value={props.input}
+            placeholder={props.placeholder}
+            // Reopen options if mouse left and returned to app while focused
+            onFocus={(): void => setOpen(true)}
+            onChange={(e): void => props.handleInput(e.target.value)}
+            onKeyDown={(e): void => {
+              if (e.key === 'Enter') {
+                props.handleSelect(props.input)
+              }
+            }}
+          />
+        </div>
       </summary>
 
       <ol className="dropdown-content text-center">
