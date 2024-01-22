@@ -17,10 +17,10 @@ const AddTagButton = (props: AddTagButtonProps): JSX.Element => {
 
   useEffect(() => {
     window.api
-      .getTags()
+      .getTags(tagInput)
       .then(setTags)
       .catch((err: Error) => setErrorMsg(err.message))
-  }, [])
+  }, [tagInput])
 
   return (
     <>
