@@ -22,7 +22,8 @@ const api = {
     ipcRenderer.invoke('db:updateUserSettings', userSettings),
   /* Tag API */
   deleteTag: (id: number): Promise<void> => ipcRenderer.invoke('db:deleteTag', id),
-  getTags: (): Promise<Tag[]> => ipcRenderer.invoke('db:getTags'),
+  getTags: (nameFilter: string = ''): Promise<Tag[]> =>
+    ipcRenderer.invoke('db:getTags', nameFilter),
   insertTagWithTransaction: (tag: Tag, transaction: Transaction): Promise<void> =>
     ipcRenderer.invoke('db:insertTagWithTransaction', tag, transaction),
   deleteTagWithTransaction: (tagId: number, transactionId: number): Promise<void> =>

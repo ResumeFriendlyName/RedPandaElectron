@@ -136,7 +136,7 @@ app.whenReady().then(() => {
     (_, userSettings: UserSettings): Promise<void> => updateUserSettings(db, userSettings)
   )
 
-  ipcMain.handle('db:getTags', (): Promise<Tag[]> => getTags(db))
+  ipcMain.handle('db:getTags', (_, nameFilter: string): Promise<Tag[]> => getTags(db, nameFilter))
   ipcMain.handle('db:insertTag', (_, tag: Tag): Promise<number> => insertTag(db, tag))
   ipcMain.handle('db:updateTag', (_, tag: Tag): Promise<void> => updateTag(db, tag))
   ipcMain.handle('db:deleteTag', (_, id: number): Promise<void> => deleteTag(db, id))

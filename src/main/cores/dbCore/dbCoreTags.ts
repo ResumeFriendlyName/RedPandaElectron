@@ -3,9 +3,10 @@ import Tag from '../../../renderer/src/models/tag'
 import Transaction from '../../../renderer/src/models/transaction'
 import TransactionWithTags from '../../../renderer/src/models/transactionWithTags'
 
-export function getTags(db: Database): Promise<Tag[]> {
+export function getTags(db: Database, nameFilter: string): Promise<Tag[]> {
+  const wildCardName = `%${nameFilter}%`
   return new Promise<Tag[]>((resolve, reject) => {
-    db.all(`SELECT * FROM tags`, (error, rows: Tag[]) => {
+    db.all(`SELECT * FROM tags WHERE "name" LIKE ?`, [wildCardName], (error, rows: Tag[]) => {
       if (error) {
         reject(error)
       }
