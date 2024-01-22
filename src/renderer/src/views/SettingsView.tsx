@@ -48,7 +48,7 @@ const SettingsView = (): JSX.Element => {
           <tbody>
             {/* Bank preference setting */}
             <tr>
-              <td className="font-semibold">Bank Preference</td>
+              <td className="font-semibold select-none">Bank Preference</td>
               <td className="flex gap-6 items-center">
                 <Dropdown
                   dropdownContent={userSettings?.bankPref}
