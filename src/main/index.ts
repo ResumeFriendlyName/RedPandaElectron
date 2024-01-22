@@ -139,6 +139,7 @@ app.whenReady().then(() => {
   ipcMain.handle('db:getTags', (): Promise<Tag[]> => getTags(db))
   ipcMain.handle('db:insertTag', (_, tag: Tag): Promise<number> => insertTag(db, tag))
   ipcMain.handle('db:updateTag', (_, tag: Tag): Promise<void> => updateTag(db, tag))
+  ipcMain.handle('db:deleteTag', (_, id: number): Promise<void> => deleteTag(db, id))
   ipcMain.handle(
     'db:insertTagWithTransaction',
     async (_, tag: Tag, transaction: Transaction): Promise<void> => {
@@ -148,7 +149,6 @@ app.whenReady().then(() => {
       return insertTagAndTransaction(db, tag.id, transaction.id)
     }
   )
-  ipcMain.handle('db:deleteTag', (_, id: number): Promise<void> => deleteTag(db, id))
   ipcMain.handle(
     'db:deleteTagWithTransaction',
     (_, tagId: number, transactionId: number): Promise<void> =>
