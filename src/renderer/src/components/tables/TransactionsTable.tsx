@@ -1,9 +1,9 @@
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import TagChip from './TagChip'
+import TagChip from '../TagChip'
 import TransactionWithTags from '@renderer/models/transactionWithTags'
 import { Fragment } from 'react'
-import AddTagButton from './AddTagButton'
+import AddTagButton from '../dropdowns/AddTagDropdown'
 import Tag from '@renderer/models/tag'
 import Transaction from '@renderer/models/transaction'
 
@@ -40,6 +40,7 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
                   <td colSpan={4}>
                     <div className="flex justify-start gap-3">
                       <AddTagButton
+                        transactionWithTags={transactionWithTag}
                         handleSelect={(tag: Tag): void =>
                           props.handleTagAddToTransaction(tag, transactionWithTag.transaction)
                         }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import Dropdown from './Dropdown'
+import Dropdown from '../dropdowns/Dropdown'
 import { ComponentSize } from '@renderer/models/types'
 
 interface TablePaginationProps {
