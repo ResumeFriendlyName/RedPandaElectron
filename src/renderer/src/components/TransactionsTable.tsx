@@ -11,7 +11,7 @@ interface TransactionsTableProps {
   transactionsWithTags: TransactionWithTags[]
   hideTags?: boolean
   handleTagAddToTransaction: (tag: Tag, transaction: Transaction) => void
-  handleTagDelete: (tagId: number) => void
+  handleTagDeleteWithTransaction: (tagId: number, transactionId: number) => void
 }
 
 const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
@@ -48,7 +48,12 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
                         <TagChip
                           key={`td_${transactionWithTag.transaction.id}_${tag.id}_${tag.name}`}
                           text={tag.name}
-                          onDelete={(): void => props.handleTagDelete(tag.id)}
+                          onDelete={(): void =>
+                            props.handleTagDeleteWithTransaction(
+                              tag.id,
+                              transactionWithTag.transaction.id
+                            )
+                          }
                         />
                       ))}
                     </div>

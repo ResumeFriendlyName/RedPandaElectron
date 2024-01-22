@@ -74,10 +74,10 @@ const TransactionsView = (): JSX.Element => {
       .catch((err: Error) => setErrorMsg(err.message))
       .finally(() => setLoading(false))
   }
-  const deleteTag = (tagId: number): void => {
+  const deleteTagWithTransaction = (tagId: number, transactionId: number): void => {
     setLoading(true)
     window.api
-      .deleteTag(tagId)
+      .deleteTagWithTransaction(tagId, transactionId)
       .then(() => getTransactions())
       .catch((err: Error) => setErrorMsg(err.message))
       .finally(() => setLoading(false))
@@ -154,7 +154,7 @@ const TransactionsView = (): JSX.Element => {
       {!loading ? (
         <TransactionsTable
           transactionsWithTags={transactionsWithTags}
-          handleTagDelete={deleteTag}
+          handleTagDeleteWithTransaction={deleteTagWithTransaction}
           handleTagAddToTransaction={handleTagAddToTransaction}
         />
       ) : (
