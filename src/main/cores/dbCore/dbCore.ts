@@ -28,10 +28,11 @@ export function closeDatabase(db: Database): void {
 }
 
 function createTagsAndTransactionsTable(db: Database): void {
-  db.run(`CREATE TABLE IF NOT EXISTS tagsAndtransactions (
+  db.run(`CREATE TABLE IF NOT EXISTS tagsAndTransactions (
     id INTEGER NOT NULL PRIMARY KEY,
     tagId INTEGER NOT NULL,
-    transactionId INTEGER NOT NULL)`)
+    transactionId INTEGER NOT NULL,
+    UNIQUE(tagId, transactionId))`)
 }
 
 function createTagsTable(db: Database): void {
@@ -54,7 +55,7 @@ function createUserSettingsTable(db: Database): void {
   db.run(
     `CREATE TABLE IF NOT EXISTS userSettings (
     id INTEGER NOT NULL PRIMARY KEY,
-    bankPref TEXT NOT NULL UNIQUE
+    bankPref TEXT NOT NULL
   )`,
     () => {
       db.run(`INSERT INTO userSettings SELECT 1, ? WHERE NOT EXISTS (SELECT * FROM userSettings)`, [
