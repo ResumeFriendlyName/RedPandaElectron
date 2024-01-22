@@ -24,7 +24,9 @@ const api = {
   deleteTag: (id: number): Promise<void> => ipcRenderer.invoke('db:deleteTag', id),
   getTags: (): Promise<Tag[]> => ipcRenderer.invoke('db:getTags'),
   insertTagWithTransaction: (tag: Tag, transaction: Transaction): Promise<void> =>
-    ipcRenderer.invoke('db:insertTagWithTransaction', tag, transaction)
+    ipcRenderer.invoke('db:insertTagWithTransaction', tag, transaction),
+  deleteTagWithTransaction: (tagId: number, transactionId: number): Promise<void> =>
+    ipcRenderer.invoke('db:deleteTagWithTransaction', tagId, transactionId)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
