@@ -32,7 +32,7 @@ const Dropdown = (props: DropdownProps): JSX.Element => {
         {props.dropdownItems.map((value) => (
           <li
             key={`li_${value}`}
-            onClick={(e): void => {
+            onMouseDown={(e): void => {
               e.stopPropagation()
               setOpen(false)
               props.handleSelect(value)
