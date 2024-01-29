@@ -2,6 +2,10 @@
   @apply inline-block relative;
 }
 
+.dropdown .summary {
+  @apply w-full;
+}
+
 .dropdown .summary::marker {
   content: "";
 }
@@ -19,5 +23,5 @@
 }
 
 .dropdown .dropdown-content li {
-  @apply h-8 hover:bg-accent hover:text-accent-content cursor-pointer select-none rounded-md flex justify-center items-center;
+  @apply hover:bg-accent hover:text-accent-content cursor-pointer select-none rounded-md flex justify-center items-center h-8;
 }

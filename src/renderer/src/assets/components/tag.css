@@ -1,5 +1,5 @@
 .tag {
-  @apply rounded-md text-sm p-1 bg-secondary select-none;
+  @apply rounded-md text-sm p-1 bg-secondary select-none w-fit;
 }
 .tag span, p {
   @apply text-secondary-content;

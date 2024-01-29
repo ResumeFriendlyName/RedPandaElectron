@@ -1,11 +1,19 @@
 .input {
-  @apply text-primary-content border-2 border-accent rounded-md;
+  @apply text-primary-content border-2 border-accent rounded-md px-2 p-1;
 }
 
-.input-icon {
+.input-icon, .input-btn {
   @apply relative;
 }
 
 .input-icon i {
-  @apply absolute left-2 top-0.5;
+  @apply absolute left-2 top-0.5 py-1;
+}
+
+.input-btn .btn {
+  @apply absolute right-2 top-0.5;
+}
+
+.input-icon .input {
+  @apply w-full pl-4;
 }
