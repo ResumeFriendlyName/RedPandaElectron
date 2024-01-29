@@ -3,20 +3,32 @@ import { electronAPI } from '@electron-toolkit/preload'
 import TransactionResponse from '../renderer/src/models/transactionResponse'
 import UserSettings from '../renderer/src/models/userSettings'
 import ImportTransactionResponse from '../renderer/src/models/importTransactionResponse'
+import Tag from '../renderer/src/models/tag'
+import Transaction from '../renderer/src/models/transaction'
 
 // Custom APIs for renderer
 const api = {
-  /* File API */
+  /* Dialog API */
   importTransactions: (): Promise<ImportTransactionResponse> =>
     ipcRenderer.invoke('dialog:importTransactions'),
-  /* DB API */
+  /* Transactions API */
   getTransactions: (amount: number, offset: number): Promise<TransactionResponse> =>
-    ipcRenderer.invoke('db:getTransactions', amount, offset),
+    ipcRenderer.invoke('db:getTransactions', amount, offset * amount),
   deleteTransactions: (ids: number[]): Promise<void> =>
     ipcRenderer.invoke('db:deleteTransactions', ids),
+  /* UserSettings API */
   getUserSettings: (): Promise<UserSettings> => ipcRenderer.invoke('db:getUserSettings'),
   updateUserSettings: (userSettings: UserSettings): Promise<void> =>
-    ipcRenderer.invoke('db:updateUserSettings', userSettings)
+    ipcRenderer.invoke('db:updateUserSettings', userSettings),
+  /* Tag API */
+  insertTag: (tag: Tag): Promise<number> => ipcRenderer.invoke('db:insertTag', tag),
+  deleteTag: (id: number): Promise<void> => ipcRenderer.invoke('db:deleteTag', id),
+  getTags: (nameFilter: string = ''): Promise<Tag[]> =>
+    ipcRenderer.invoke('db:getTags', nameFilter),
+  insertTagWithTransaction: (tag: Tag, transaction: Transaction): Promise<void> =>
+    ipcRenderer.invoke('db:insertTagWithTransaction', tag, transaction),
+  deleteTagWithTransaction: (tagId: number, transactionId: number): Promise<void> =>
+    ipcRenderer.invoke('db:deleteTagWithTransaction', tagId, transactionId)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

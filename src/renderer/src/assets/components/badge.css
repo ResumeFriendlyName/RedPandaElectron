@@ -1,0 +1,6 @@
+.badge {
+  @apply relative;
+}
+.badge::after {
+  @apply bg-accent outline-dotted outline-2 outline-primary text-accent-content font-medium rounded-md absolute top-0 right-0 text-xs px-1 drop-shadow-md select-none;
+}

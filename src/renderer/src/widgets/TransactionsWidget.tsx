@@ -1,24 +1,24 @@
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { getTransactions } from '@renderer/api/transactionsApi'
-import Loader from '@renderer/components/Loader'
-import { ErrorModal } from '@renderer/components/StatusModals'
-import TransactionsTable from '@renderer/components/TransactionsTable'
-import Transaction from '@renderer/models/transaction'
+import Loader from '@renderer/components/common/Loader'
+import { ErrorModal } from '@renderer/components/modals/StatusModals'
+import TransactionsTable from '@renderer/components/tables/TransactionsTable'
 import TransactionResponse from '@renderer/models/transactionResponse'
+import TransactionWithTags from '@renderer/models/transactionWithTags'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const TransactionsWidget = (): JSX.Element => {
   const navigate = useNavigate()
-  const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [transactionsWithTags, setTransactions] = useState<TransactionWithTags[]>([])
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     setLoading(true)
-    getTransactions(0, 5)
-      .then((response: TransactionResponse) => setTransactions(response.transactions))
+    window.api
+      .getTransactions(5, 0)
+      .then((response: TransactionResponse) => setTransactions(response.transactionsWithTags))
       .catch((err: Error) => setErrorMsg(err.message))
       .finally(() => setLoading(false))
   }, [])
@@ -31,7 +31,16 @@ const TransactionsWidget = (): JSX.Element => {
           <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
         </button>
       </div>
-      {!loading ? <TransactionsTable transactions={transactions} /> : <Loader />}
+      {!loading ? (
+        <TransactionsTable
+          transactionsWithTags={transactionsWithTags}
+          hideTags
+          handleTagAddToTransaction={(): void => {}}
+          handleTagDeleteWithTransaction={(): void => {}}
+        />
+      ) : (
+        <Loader />
+      )}
       <ErrorModal contentText={errorMsg} handleClose={(): void => setErrorMsg('')} />
     </div>
   )

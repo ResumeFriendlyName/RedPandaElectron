@@ -1,23 +1,24 @@
-import { faFileImport, faRotateLeft } from '@fortawesome/free-solid-svg-icons'
+import { faEye, faEyeSlash, faFileImport, faRotateLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { getTransactions } from '@renderer/api/transactionsApi'
-import Accordion from '@renderer/components/Accordion'
-import BankPreferenceModal from '@renderer/components/BankPreferenceModal'
-import Loader from '@renderer/components/Loader'
-import { ErrorModal, InfoModal } from '@renderer/components/StatusModals'
-import TablePagination from '@renderer/components/TablePagination'
-import TransactionsTable from '@renderer/components/TransactionsTable'
-import WidgetHeader from '@renderer/components/WidgetHeader'
+import Accordion from '@renderer/components/dropdowns/Accordion'
+import BankPreferenceModal from '@renderer/components/modals/BankPreferenceModal'
+import Loader from '@renderer/components/common/Loader'
+import { ErrorModal, InfoModal } from '@renderer/components/modals/StatusModals'
+import TablePagination from '@renderer/components/tables/TablePagination'
+import TransactionsTable from '@renderer/components/tables/TransactionsTable'
+import WidgetHeader from '@renderer/components/common/WidgetHeader'
 import ImportTransactionResponse from '@renderer/models/importTransactionResponse'
+import Tag from '@renderer/models/tag'
 import Transaction from '@renderer/models/transaction'
 import TransactionResponse from '@renderer/models/transactionResponse'
+import TransactionWithTags from '@renderer/models/transactionWithTags'
 import { BankType, SessionStorageKey } from '@renderer/models/types'
 import UserSettings from '@renderer/models/userSettings'
 import useSessionStorage from '@renderer/utils/CustomHooks'
 import { useCallback, useEffect, useState } from 'react'
 
 const TransactionsView = (): JSX.Element => {
-  const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [transactionsWithTags, setTransactions] = useState<TransactionWithTags[]>([])
   const [transactionAmount, setTransactionAmount] = useState<number>(10)
   const [transactionCount, setTransactionCount] = useState<number>(0)
   const [lastImportIds, setLastImportIds] = useSessionStorage<number[]>(
@@ -30,6 +31,7 @@ const TransactionsView = (): JSX.Element => {
   const [dupeModalIsOpen, setDupeModalOpen] = useState<boolean>(false)
   const [dupeTransactions, setDupeTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState<boolean>(true)
+  const [hideTags, setHideTags] = useState<boolean>(true)
 
   const handleTransactionAmount = (value: number): void => {
     setTransactionAmount(value)
@@ -56,7 +58,7 @@ const TransactionsView = (): JSX.Element => {
           setDupeModalOpen(true)
           setDupeTransactions(response.dupeTransactions)
         } else {
-          getTransactionsCallback()
+          getTransactions()
         }
       })
       .catch((err: Error) => setErrorMsg(err.message))
@@ -68,17 +70,35 @@ const TransactionsView = (): JSX.Element => {
       .deleteTransactions(ids)
       .then(() => {
         setLastImportIds([])
-        getTransactionsCallback()
+        getTransactions()
       })
       .catch((err: Error) => setErrorMsg(err.message))
       .finally(() => setLoading(false))
   }
-
-  const getTransactionsCallback = useCallback(() => {
+  const deleteTagWithTransaction = (tagId: number, transactionId: number): void => {
     setLoading(true)
-    getTransactions(offset, transactionAmount)
+    window.api
+      .deleteTagWithTransaction(tagId, transactionId)
+      .then(() => getTransactions())
+      .catch((err: Error) => setErrorMsg(err.message))
+      .finally(() => setLoading(false))
+  }
+
+  const handleTagAddToTransaction = (tag: Tag, transaction: Transaction): void => {
+    setLoading(true)
+    window.api
+      .insertTagWithTransaction(tag, transaction)
+      .then(() => getTransactions())
+      .catch((err: Error) => setErrorMsg(err.message))
+      .finally(() => setLoading(false))
+  }
+
+  const getTransactions = useCallback(() => {
+    setLoading(true)
+    window.api
+      .getTransactions(transactionAmount, offset)
       .then((response: TransactionResponse) => {
-        setTransactions(response.transactions)
+        setTransactions(response.transactionsWithTags)
         setTransactionCount(response.count)
       })
       .catch((err: Error) => setErrorMsg(err.message))
@@ -93,7 +113,7 @@ const TransactionsView = (): JSX.Element => {
       .catch((err: Error) => setErrorMsg(err.message))
       .finally(() => setLoading(false))
   }, [])
-  useEffect(() => getTransactionsCallback(), [transactionAmount, offset])
+  useEffect(() => getTransactions(), [transactionAmount, offset])
 
   return (
     <div className="widget-expanded">
@@ -112,11 +132,16 @@ const TransactionsView = (): JSX.Element => {
           <div />
         )}
         <div className="flex gap-6">
+          {/* Undo last import button */}
           {lastImportIds.length > 0 && (
             <button className="btn btn-md" onClick={(): void => deleteTransactions(lastImportIds)}>
               <FontAwesomeIcon icon={faRotateLeft} />{' '}
             </button>
           )}
+          {/* Show/hide tags button */}
+          <button className="btn btn-md" onClick={(): void => setHideTags((prev) => !prev)}>
+            <FontAwesomeIcon icon={hideTags ? faEyeSlash : faEye} />
+          </button>
           {/* Import transactions button */}
           <button
             className="btn btn-md"
@@ -132,7 +157,16 @@ const TransactionsView = (): JSX.Element => {
           </button>
         </div>
       </div>
-      {!loading ? <TransactionsTable transactions={transactions} /> : <Loader />}
+      {!loading ? (
+        <TransactionsTable
+          hideTags={hideTags}
+          transactionsWithTags={transactionsWithTags}
+          handleTagDeleteWithTransaction={deleteTagWithTransaction}
+          handleTagAddToTransaction={handleTagAddToTransaction}
+        />
+      ) : (
+        <Loader />
+      )}
       <BankPreferenceModal open={bankModalIsOpen} handleSubmit={handleBankModalSubmit} />
       <InfoModal
         open={dupeModalIsOpen}
