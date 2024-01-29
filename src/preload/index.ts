@@ -21,6 +21,7 @@ const api = {
   updateUserSettings: (userSettings: UserSettings): Promise<void> =>
     ipcRenderer.invoke('db:updateUserSettings', userSettings),
   /* Tag API */
+  insertTag: (tag: Tag): Promise<number> => ipcRenderer.invoke('db:insertTag', tag),
   deleteTag: (id: number): Promise<void> => ipcRenderer.invoke('db:deleteTag', id),
   getTags: (nameFilter: string = ''): Promise<Tag[]> =>
     ipcRenderer.invoke('db:getTags', nameFilter),

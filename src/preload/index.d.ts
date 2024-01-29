@@ -15,6 +15,7 @@ interface API {
   getUserSettings: () => Promise<UserSettings>
   updateUserSettings: (userSettings: UserSettings) => Promise<void>
   /* Tag API */
+  insertTag: (tag: Tag) => Promise<number>
   deleteTag: (id: number) => Promise<void>
   getTags: (nameFilter?: string) => Promise<Tag[]>
   insertTagWithTransaction: (tag: Tag, transaction: Transaction) => Promise<void>
