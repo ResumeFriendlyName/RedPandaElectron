@@ -1,4 +1,4 @@
-import { faFileImport, faRotateLeft } from '@fortawesome/free-solid-svg-icons'
+import { faEye, faEyeSlash, faFileImport, faRotateLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Accordion from '@renderer/components/dropdowns/Accordion'
 import BankPreferenceModal from '@renderer/components/modals/BankPreferenceModal'
@@ -31,6 +31,7 @@ const TransactionsView = (): JSX.Element => {
   const [dupeModalIsOpen, setDupeModalOpen] = useState<boolean>(false)
   const [dupeTransactions, setDupeTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState<boolean>(true)
+  const [hideTags, setHideTags] = useState<boolean>(true)
 
   const handleTransactionAmount = (value: number): void => {
     setTransactionAmount(value)
@@ -131,11 +132,16 @@ const TransactionsView = (): JSX.Element => {
           <div />
         )}
         <div className="flex gap-6">
+          {/* Undo last import button */}
           {lastImportIds.length > 0 && (
             <button className="btn btn-md" onClick={(): void => deleteTransactions(lastImportIds)}>
               <FontAwesomeIcon icon={faRotateLeft} />{' '}
             </button>
           )}
+          {/* Show/hide tags button */}
+          <button className="btn btn-md" onClick={(): void => setHideTags((prev) => !prev)}>
+            <FontAwesomeIcon icon={hideTags ? faEyeSlash : faEye} />
+          </button>
           {/* Import transactions button */}
           <button
             className="btn btn-md"
@@ -153,6 +159,7 @@ const TransactionsView = (): JSX.Element => {
       </div>
       {!loading ? (
         <TransactionsTable
+          hideTags={hideTags}
           transactionsWithTags={transactionsWithTags}
           handleTagDeleteWithTransaction={deleteTagWithTransaction}
           handleTagAddToTransaction={handleTagAddToTransaction}
