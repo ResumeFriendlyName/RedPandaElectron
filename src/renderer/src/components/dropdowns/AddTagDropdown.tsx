@@ -5,6 +5,7 @@ import InputDropdown from './InputDropdown'
 import TransactionWithTags from '@renderer/models/transactionWithTags'
 
 interface AddTagDropdownProps {
+  tags?: Tag[]
   transactionWithTags?: TransactionWithTags
   handleSelect: (tag: Tag) => void
 }
@@ -14,7 +15,7 @@ interface AddTagDropdownProps {
  * @param handleSelect Returns the selected tag. If id is -1, the tag is new
  */
 const AddTagDropdown = (props: AddTagDropdownProps): JSX.Element => {
-  const [tags, setTags] = useState<Tag[]>([])
+  const [tags, setTags] = useState<Tag[]>(props.tags ?? [])
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [tagInput, setTagInput] = useState<string>('')
 
@@ -26,6 +27,12 @@ const AddTagDropdown = (props: AddTagDropdownProps): JSX.Element => {
       .then(setTags)
       .catch((err: Error) => setErrorMsg(err.message))
   }, [tagInput])
+
+  useEffect(() => {
+    if (props.tags !== undefined) {
+      setTags(props.tags)
+    }
+  }, [props.tags])
 
   return (
     <>

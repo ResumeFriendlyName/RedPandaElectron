@@ -40,12 +40,15 @@ const AllTags = (props: AllTagsProps): JSX.Element => {
   return (
     <div className="flex flex-wrap gap-2">
       <div className="flex items-center gap-6">
-        <AddTagDropdown handleSelect={handleTagAdd} />
+        <AddTagDropdown tags={tags} handleSelect={handleTagAdd} />
 
         <InfoButton
           headingText={'Tag management info'}
           content={
-            <p>Please note, deleting tags will delete them from every transaction that has them</p>
+            <p>
+              Please note, deleting a tag here will delete it from every transaction that has been
+              assigned to it.
+            </p>
           }
           modalClassName="w-[40rem]"
         />
