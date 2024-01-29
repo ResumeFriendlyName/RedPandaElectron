@@ -31,16 +31,15 @@ const TransactionsWidget = (): JSX.Element => {
           <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
         </button>
       </div>
-      {!loading ? (
-        <TransactionsTable
-          transactionsWithTags={transactionsWithTags}
-          hideTags
-          handleTagAddToTransaction={(): void => {}}
-          handleTagDeleteWithTransaction={(): void => {}}
-        />
-      ) : (
-        <Loader />
-      )}
+
+      <TransactionsTable
+        transactionsWithTags={transactionsWithTags}
+        hideTags
+        handleTagAddToTransaction={(): void => {}}
+        handleTagDeleteWithTransaction={(): void => {}}
+      />
+
+      <Loader open={loading} />
       <ErrorModal contentText={errorMsg} handleClose={(): void => setErrorMsg('')} />
     </div>
   )

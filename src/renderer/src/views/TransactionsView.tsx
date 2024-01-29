@@ -2,7 +2,6 @@ import { faEye, faEyeSlash, faFileImport, faRotateLeft } from '@fortawesome/free
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Accordion from '@renderer/components/dropdowns/Accordion'
 import BankPreferenceModal from '@renderer/components/modals/BankPreferenceModal'
-import Loader from '@renderer/components/common/Loader'
 import { ErrorModal, InfoModal } from '@renderer/components/modals/StatusModals'
 import TablePagination from '@renderer/components/tables/TablePagination'
 import TransactionsTable from '@renderer/components/tables/TransactionsTable'
@@ -16,6 +15,7 @@ import { BankType, SessionStorageKey } from '@renderer/models/types'
 import UserSettings from '@renderer/models/userSettings'
 import useSessionStorage from '@renderer/utils/CustomHooks'
 import { useCallback, useEffect, useState } from 'react'
+import Loader from '@renderer/components/common/Loader'
 
 const TransactionsView = (): JSX.Element => {
   const [transactionsWithTags, setTransactions] = useState<TransactionWithTags[]>([])
@@ -157,16 +157,13 @@ const TransactionsView = (): JSX.Element => {
           </button>
         </div>
       </div>
-      {!loading ? (
-        <TransactionsTable
-          hideTags={hideTags}
-          transactionsWithTags={transactionsWithTags}
-          handleTagDeleteWithTransaction={deleteTagWithTransaction}
-          handleTagAddToTransaction={handleTagAddToTransaction}
-        />
-      ) : (
-        <Loader />
-      )}
+
+      <TransactionsTable
+        hideTags={hideTags}
+        transactionsWithTags={transactionsWithTags}
+        handleTagDeleteWithTransaction={deleteTagWithTransaction}
+        handleTagAddToTransaction={handleTagAddToTransaction}
+      />
       <BankPreferenceModal open={bankModalIsOpen} handleSubmit={handleBankModalSubmit} />
       <InfoModal
         open={dupeModalIsOpen}
@@ -199,6 +196,8 @@ const TransactionsView = (): JSX.Element => {
           setDupeTransactions([])
         }}
       />
+
+      <Loader open={loading} />
       <ErrorModal contentText={errorMsg} handleClose={(): void => setErrorMsg('')} />
     </div>
   )

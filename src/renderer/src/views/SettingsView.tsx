@@ -9,23 +9,30 @@ import AllTags from '@renderer/components/AllTags'
 const SettingsView = (): JSX.Element => {
   const [userSettings, setUserSettings] = useState<UserSettings>()
   const [errorMsg, setErrorMsg] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
 
   const handleUserSettings = (value: UserSettings): void => {
     setUserSettings(value)
-    window.api.updateUserSettings(value).catch((err: Error) => setErrorMsg(err.message))
+    setLoading(true)
+    window.api
+      .updateUserSettings(value)
+      .catch((err: Error) => setErrorMsg(err.message))
+      .finally(() => setLoading(false))
   }
 
   useEffect(() => {
+    setLoading(true)
     window.api
       .getUserSettings()
       .then((value) => setUserSettings(value))
       .catch((err: Error) => setErrorMsg(err.message))
+      .finally(() => setLoading(false))
   }, [])
 
   return (
     <div className="widget-expanded self-center w-full max-w-5xl min-w-fit">
       <WidgetHeader heading="Settings" notWidget />
-      {userSettings !== undefined ? (
+      {userSettings !== undefined && (
         <table className="table">
           <colgroup>
             <col className="w-1/2" />
@@ -50,9 +57,8 @@ const SettingsView = (): JSX.Element => {
             </tr>
           </tbody>
         </table>
-      ) : (
-        <Loader />
       )}
+      <Loader open={loading} />
       <ErrorModal contentText={errorMsg} handleClose={(): void => setErrorMsg('')} />
     </div>
   )
