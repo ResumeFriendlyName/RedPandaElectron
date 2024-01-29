@@ -1,8 +1,8 @@
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import Loader from '@renderer/components/Loader'
-import { ErrorModal } from '@renderer/components/StatusModals'
-import TransactionsTable from '@renderer/components/TransactionsTable'
+import Loader from '@renderer/components/common/Loader'
+import { ErrorModal } from '@renderer/components/modals/StatusModals'
+import TransactionsTable from '@renderer/components/tables/TransactionsTable'
 import TransactionResponse from '@renderer/models/transactionResponse'
 import TransactionWithTags from '@renderer/models/transactionWithTags'
 import { useEffect, useState } from 'react'
@@ -36,7 +36,7 @@ const TransactionsWidget = (): JSX.Element => {
           transactionsWithTags={transactionsWithTags}
           hideTags
           handleTagAddToTransaction={(): void => {}}
-          handleTagDelete={(): void => {}}
+          handleTagDeleteWithTransaction={(): void => {}}
         />
       ) : (
         <Loader />
