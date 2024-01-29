@@ -6,12 +6,16 @@ import TransactionWithTags from '../../../renderer/src/models/transactionWithTag
 export function getTags(db: Database, nameFilter: string): Promise<Tag[]> {
   const wildCardName = `%${nameFilter}%`
   return new Promise<Tag[]>((resolve, reject) => {
-    db.all(`SELECT * FROM tags WHERE "name" LIKE ?`, [wildCardName], (error, rows: Tag[]) => {
-      if (error) {
-        reject(error)
+    db.all(
+      `SELECT * FROM tags WHERE "name" LIKE ? ORDER BY name ASC`,
+      [wildCardName],
+      (error, rows: Tag[]) => {
+        if (error) {
+          reject(error)
+        }
+        resolve(rows)
       }
-      resolve(rows)
-    })
+    )
   })
 }
 
