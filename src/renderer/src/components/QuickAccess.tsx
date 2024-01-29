@@ -20,7 +20,7 @@ const ButtonAndText = (props: ButtonAndTextProps): JSX.Element => {
   const navigate = useNavigate()
   return (
     <div className="flex flex-col items-center gap-1">
-      {/* TODO: Remove disabled once all button functionality has been implemented */}
+      {/* TODO: Remove disabled for logout once all button functionality has been implemented */}
       <button
         className="btn btn-md btn-round"
         disabled={props.text == 'Log out' || props.text == props.activeButtonText}
@@ -37,7 +37,7 @@ const ButtonAndText = (props: ButtonAndTextProps): JSX.Element => {
 }
 
 const QuickAccess = (): JSX.Element => {
-  const [activeButtonText, setActiveButtonText] = useState<string>('')
+  const [activeButtonText, setActiveButtonText] = useState<string>('Finances')
 
   const handleActiveButtonText = (value: string): void => setActiveButtonText(value)
 
