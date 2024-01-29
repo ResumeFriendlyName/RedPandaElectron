@@ -38,7 +38,7 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
               {!props.hideTags && (
                 <tr>
                   <td colSpan={4}>
-                    <div className="flex justify-start gap-3">
+                    <div className="flex justify-start gap-3 flex-wrap">
                       <AddTagButton
                         transactionWithTags={transactionWithTag}
                         handleSelect={(tag: Tag): void =>
