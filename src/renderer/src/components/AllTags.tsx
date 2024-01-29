@@ -39,7 +39,7 @@ const AllTags = (props: AllTagsProps): JSX.Element => {
 
   return (
     <div className="flex flex-wrap gap-2">
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-6 w-full">
         <AddTagDropdown tags={tags} handleSelect={handleTagAdd} />
 
         <InfoButton
