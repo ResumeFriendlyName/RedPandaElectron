@@ -1,5 +1,4 @@
 import Tag from '@renderer/models/tag'
-import { ComponentSize } from '@renderer/models/types'
 import { useEffect, useState } from 'react'
 import { ErrorModal } from '../modals/StatusModals'
 import InputDropdown from './InputDropdown'
@@ -33,6 +32,7 @@ const AddTagDropdown = (props: AddTagDropdownProps): JSX.Element => {
       <InputDropdown
         input={tagInput}
         placeholder="Add Tag"
+        maxLength={20}
         dropdownItems={
           props.transactionWithTags === undefined
             ? tags.map((map) => map.name)
@@ -43,7 +43,7 @@ const AddTagDropdown = (props: AddTagDropdownProps): JSX.Element => {
                 )
                 .map((tag) => tag.name)
         }
-        size={ComponentSize.SM}
+        width={16}
         handleInput={handleTagInput}
         handleSelect={(value: string): void => {
           const tag: Tag | undefined = tags.find((tag) => tag.name == value)

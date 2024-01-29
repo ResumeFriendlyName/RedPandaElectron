@@ -2,6 +2,7 @@ import Tag from '@renderer/models/tag'
 import { useEffect, useState } from 'react'
 import TagChip from './TagChip'
 import AddTagDropdown from './dropdowns/AddTagDropdown'
+import InfoButton from './buttons/InfoButton'
 
 interface AllTagsProps {
   handleErrorMessage: (value: string) => void
@@ -38,7 +39,17 @@ const AllTags = (props: AllTagsProps): JSX.Element => {
 
   return (
     <div className="flex flex-wrap gap-2">
-      <AddTagDropdown handleSelect={handleTagAdd} />
+      <div className="flex items-center gap-6">
+        <AddTagDropdown handleSelect={handleTagAdd} />
+
+        <InfoButton
+          headingText={'Tag management info'}
+          content={
+            <p>Please note, deleting tags will delete them from every transaction that has them</p>
+          }
+          modalClassName="w-[40rem]"
+        />
+      </div>
 
       {tags.map((tag) => (
         <TagChip

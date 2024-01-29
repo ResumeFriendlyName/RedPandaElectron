@@ -1,13 +1,13 @@
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ComponentSize } from '@renderer/models/types'
 import { useRef, useState } from 'react'
 
 interface InputDropdownProps {
   input: string
   placeholder: string
   dropdownItems: string[]
-  size: ComponentSize
+  maxLength: number
+  width: number
   className?: string
   handleInput: (value: string) => void
   handleSelect: (value: string) => void
@@ -40,6 +40,7 @@ const InputDropdown = (props: InputDropdownProps): JSX.Element => {
           }
         }
       }}
+      style={{ width: `${props.width}em` }}
     >
       <summary className="summary">
         <div className="input-icon">
@@ -50,6 +51,7 @@ const InputDropdown = (props: InputDropdownProps): JSX.Element => {
             ref={inputRef}
             className="input text-center"
             type="text"
+            maxLength={props.maxLength}
             onClick={(e): void => {
               e.preventDefault()
               setOpen(true)
