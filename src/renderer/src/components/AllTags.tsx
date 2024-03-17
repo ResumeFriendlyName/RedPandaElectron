@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import TagChip from './TagChip'
 import AddTagDropdown from './dropdowns/AddTagDropdown'
 import InfoButton from './buttons/InfoButton'
+import { WarningModal } from './modals/StatusModals'
 
 interface AllTagsProps {
   handleErrorMessage: (value: string) => void
@@ -10,6 +11,7 @@ interface AllTagsProps {
 
 const AllTags = (props: AllTagsProps): JSX.Element => {
   const [tags, setTags] = useState<Tag[]>([])
+  const [showWarningForTag, setShowWarningForTag] = useState<Tag | undefined>(undefined)
 
   const getTags = (): Promise<void> =>
     window.api
@@ -58,9 +60,27 @@ const AllTags = (props: AllTagsProps): JSX.Element => {
         <TagChip
           key={`tag_${tag.id}`}
           text={tag.name}
-          onDelete={(): void => handleTagDelete(tag.id)}
+          onDelete={(): void => setShowWarningForTag(tag)}
         />
       ))}
+
+      <WarningModal
+        open={showWarningForTag !== undefined}
+        textElement={
+          <p>
+            {`Are you sure you want to delete the tag "${showWarningForTag?.name}"?\n`}
+            <b>This will delete it for every assigned transaction.</b>
+          </p>
+        }
+        yesChoiceName="Delete"
+        noChoiceName="Cancel"
+        handleChoice={(choice): void => {
+          if (choice) {
+            handleTagDelete(showWarningForTag!.id)
+          }
+          setShowWarningForTag(undefined)
+        }}
+      />
     </div>
   )
 }
