@@ -40,15 +40,17 @@ const AddTagDropdown = (props: AddTagDropdownProps): JSX.Element => {
         input={tagInput}
         placeholder="Add Tag"
         maxLength={20}
-        dropdownItems={
-          props.transactionWithTags === undefined
-            ? tags.map((map) => map.name)
-            : tags
-                .filter(
-                  (tag) =>
-                    !props.transactionWithTags!.tags.some((compareTag) => compareTag.id === tag.id)
-                )
-                .map((tag) => tag.name)
+        dropdownItems={tags.map((tag) => tag.name)}
+        excludedItems={
+          props.transactionWithTags !== undefined
+            ? new Set(
+                tags
+                  .filter((tag) =>
+                    props.transactionWithTags!.tags.some((compareTag) => compareTag.id === tag.id)
+                  )
+                  .map((tag) => tag.name)
+              )
+            : undefined
         }
         width={16}
         handleInput={handleTagInput}

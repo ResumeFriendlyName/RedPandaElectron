@@ -9,6 +9,7 @@ interface InputDropdownProps {
   maxLength: number
   width: number
   className?: string
+  excludedItems?: Set<string>
   handleInput: (value: string) => void
   handleSelect: (value: string) => void
 }
@@ -72,12 +73,16 @@ const InputDropdown = (props: InputDropdownProps): JSX.Element => {
 
       <ol className="dropdown-content text-center">
         {props.dropdownItems.length > 0
-          ? props.dropdownItems.map((value) => (
-              <li key={`li_${value}`} onMouseDown={(e): void => handleSelect(e, value)}>
-                {value}
-              </li>
-            ))
-          : props.input !== '' && (
+          ? props.dropdownItems.map(
+              (value) =>
+                !props.excludedItems?.has(value) && (
+                  <li key={`li_${value}`} onMouseDown={(e): void => handleSelect(e, value)}>
+                    {value}
+                  </li>
+                )
+            )
+          : props.input !== '' &&
+            !props.excludedItems?.has(props.input) && (
               <li
                 className="badge after:content-['NEW']"
                 onMouseDown={(e): void => handleSelect(e, props.input)}
