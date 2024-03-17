@@ -49,6 +49,7 @@ const SettingsView = (): JSX.Element => {
                 />
               </td>
             </tr>
+            {/* Tags setting */}
             <tr>
               <td className="font-semibold select-none">Tags</td>
               <td>
