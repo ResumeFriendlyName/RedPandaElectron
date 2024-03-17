@@ -1,6 +1,6 @@
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface InputDropdownProps {
   input: string
@@ -17,6 +17,8 @@ interface InputDropdownProps {
 const InputDropdown = (props: InputDropdownProps): JSX.Element => {
   const [open, setOpen] = useState<boolean>(false)
   const inputRef = useRef<HTMLInputElement | null>(null)
+  const contentRef = useRef<HTMLOListElement | null>(null)
+  const [dropdownHeight, setDropdownHeight] = useState<number | string | undefined>(undefined)
 
   const handleSelect = (
     e: React.MouseEvent<HTMLLIElement, MouseEvent> | React.KeyboardEvent<HTMLInputElement>,
@@ -27,6 +29,17 @@ const InputDropdown = (props: InputDropdownProps): JSX.Element => {
     props.handleSelect(value)
     props.handleInput('')
   }
+
+  useEffect(() => {
+    if (contentRef.current !== null) {
+      const documentOffset = contentRef.current.getBoundingClientRect().top + window.scrollY
+      if (contentRef.current.clientHeight + documentOffset > window.innerHeight) {
+        setDropdownHeight(window.innerHeight - documentOffset - 16)
+        return
+      }
+    }
+    setDropdownHeight('fit-content')
+  }, [contentRef])
 
   return (
     <details
@@ -71,7 +84,13 @@ const InputDropdown = (props: InputDropdownProps): JSX.Element => {
         </div>
       </summary>
 
-      <ol className="dropdown-content text-center">
+      <ol
+        ref={contentRef}
+        style={{
+          height: dropdownHeight
+        }}
+        className="dropdown-content text-center overflow-y-scroll"
+      >
         {props.dropdownItems.length > 0
           ? props.dropdownItems.map(
               (value) =>
