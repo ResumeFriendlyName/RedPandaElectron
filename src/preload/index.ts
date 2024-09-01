@@ -5,6 +5,7 @@ import UserSettings from '../renderer/src/models/userSettings'
 import ImportTransactionResponse from '../renderer/src/models/importTransactionResponse'
 import Tag from '../renderer/src/models/tag'
 import Transaction from '../renderer/src/models/transaction'
+import CashFlow from '../renderer/src/models/cashflow'
 
 // Custom APIs for renderer
 const api = {
@@ -16,6 +17,8 @@ const api = {
     ipcRenderer.invoke('db:getTransactions', amount, offset * amount),
   deleteTransactions: (ids: number[]): Promise<void> =>
     ipcRenderer.invoke('db:deleteTransactions', ids),
+  getCashFlow: (startDate: string, endDate: string): Promise<CashFlow> =>
+    ipcRenderer.invoke('db:getCashFlow', startDate, endDate),
   /* UserSettings API */
   getUserSettings: (): Promise<UserSettings> => ipcRenderer.invoke('db:getUserSettings'),
   updateUserSettings: (userSettings: UserSettings): Promise<void> =>

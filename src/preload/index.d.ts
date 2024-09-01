@@ -11,6 +11,7 @@ interface API {
   /* Transactions API */
   getTransactions: (amount: number, offset: number) => Promise<TransactionResponse>
   deleteTransactions: (ids: number[]) => Promise<void>
+  getCashFlow: (startDate: string, endDate: string) => Promise<CashFlow>
   /* UserSettings API */
   getUserSettings: () => Promise<UserSettings>
   updateUserSettings: (userSettings: UserSettings) => Promise<void>

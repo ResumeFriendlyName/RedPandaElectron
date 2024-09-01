@@ -11,6 +11,7 @@ import Transaction from '../renderer/src/models/transaction'
 import ImportTransactionResponse from '../renderer/src/models/importTransactionResponse'
 import {
   deleteTransactions,
+  getCashFlowInDateRange,
   getDuplicateTransactions,
   getTransactions,
   getTransactionsCount,
@@ -27,6 +28,7 @@ import {
   updateTag
 } from './cores/dbCore/dbCoreTags'
 import Tag from '../renderer/src/models/tag'
+import CashFlow from '../renderer/src/models/cashflow'
 
 function createWindow(): void {
   // Create the browser window.
@@ -124,10 +126,14 @@ app.whenReady().then(() => {
       }
     }
   )
-
   ipcMain.handle(
     'db:deleteTransactions',
     (_, ids: number[]): Promise<void> => deleteTransactions(db, ids)
+  )
+  ipcMain.handle(
+    'db:getCashFlow',
+    (_, startDate: string, endDate: string): Promise<CashFlow> =>
+      getCashFlowInDateRange(db, startDate, endDate)
   )
 
   ipcMain.handle('db:getUserSettings', (): Promise<UserSettings> => getUserSettings(db))
