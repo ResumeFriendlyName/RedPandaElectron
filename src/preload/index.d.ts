@@ -19,6 +19,7 @@ interface API {
   insertTag: (tag: Tag) => Promise<number>
   deleteTag: (id: number) => Promise<void>
   getTags: (nameFilter?: string) => Promise<Tag[]>
+  getTagAmounts: (startDate: string, endDate: string) => Promise<TagAmount[]>
   insertTagWithTransaction: (tag: Tag, transaction: Transaction) => Promise<void>
   deleteTagWithTransaction: (tagId: number, transactionId: number) => Promise<void>
 }

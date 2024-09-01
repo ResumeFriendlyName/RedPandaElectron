@@ -6,6 +6,7 @@ import ImportTransactionResponse from '../renderer/src/models/importTransactionR
 import Tag from '../renderer/src/models/tag'
 import Transaction from '../renderer/src/models/transaction'
 import CashFlow from '../renderer/src/models/cashflow'
+import TagAmount from '../renderer/src/models/tagAmount'
 
 // Custom APIs for renderer
 const api = {
@@ -26,6 +27,8 @@ const api = {
   /* Tag API */
   insertTag: (tag: Tag): Promise<number> => ipcRenderer.invoke('db:insertTag', tag),
   deleteTag: (id: number): Promise<void> => ipcRenderer.invoke('db:deleteTag', id),
+  getTagAmounts: (startDate: string, endDate: string): Promise<TagAmount[]> =>
+    ipcRenderer.invoke('db:getTagAmounts', startDate, endDate),
   getTags: (nameFilter: string = ''): Promise<Tag[]> =>
     ipcRenderer.invoke('db:getTags', nameFilter),
   insertTagWithTransaction: (tag: Tag, transaction: Transaction): Promise<void> =>

@@ -1,5 +1,5 @@
 .widget {
-  @apply bg-primary text-primary-content rounded-lg p-3 w-fit shadow-md flex flex-col gap-5;
+  @apply bg-primary text-primary-content rounded-lg p-3 w-fit shadow-md flex flex-col gap-5 h-fit;
 }
 .widget .widget-header {
   @apply flex justify-between items-end;

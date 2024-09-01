@@ -2,6 +2,37 @@ import { Database, RunResult } from 'sqlite3'
 import Tag from '../../../renderer/src/models/tag'
 import Transaction from '../../../renderer/src/models/transaction'
 import TransactionWithTags from '../../../renderer/src/models/transactionWithTags'
+import TagAmount from '../../../renderer/src/models/tagAmount'
+
+export function getTagAmounts(
+  db: Database,
+  tags: Tag[],
+  startDate: string,
+  endDate: string
+): Promise<TagAmount[]> {
+  return new Promise((resolve, reject) => {
+    const promiseBase = (tag: Tag): Promise<TagAmount> =>
+      new Promise<TagAmount>((resolveValue) => {
+        db.get(
+          `
+          SELECT SUM(amount) 
+          FROM transactions 
+          INNER JOIN tagsAndTransactions ON tagsAndTransactions.transactionId = transactions.id
+          WHERE tagsAndTransactions.tagId = ? AND date BETWEEN ? AND ?`,
+          [tag.id, startDate, endDate],
+          (error, value_dict: [string: number]) => {
+            if (error) {
+              reject(error)
+            }
+            const key = 'SUM(amount)'
+            const value: number = value_dict[key] ?? 0
+            resolveValue({ tag: tag, amount: value })
+          }
+        )
+      })
+    resolve(Promise.all(tags.map((tag) => promiseBase(tag))))
+  })
+}
 
 export function getTags(db: Database, nameFilter: string): Promise<Tag[]> {
   const wildCardName = `%${nameFilter}%`
