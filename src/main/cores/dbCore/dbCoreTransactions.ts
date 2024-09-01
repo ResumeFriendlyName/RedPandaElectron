@@ -1,5 +1,36 @@
 import { Database, RunResult } from 'sqlite3'
 import Transaction from '../../../renderer/src/models/transaction'
+import CashFlow from '../../../renderer/src/models/cashflow'
+
+export async function getCashFlowInDateRange(
+  db: Database,
+  startDate: string,
+  endDate: string
+): Promise<CashFlow> {
+  return new Promise<CashFlow>((resolve, reject) => {
+    const promiseBase = (amountConditionalString): Promise<number> =>
+      new Promise<number>((resolveValue) => {
+        db.get(
+          `SELECT SUM(amount) FROM transactions WHERE date <= ? AND date <= ? AND ?`,
+          [startDate, endDate, amountConditionalString],
+          (err, value: number) => {
+            if (err) {
+              reject(err)
+            }
+            resolveValue(value)
+          }
+        )
+      })
+
+    Promise.all([promiseBase('amount < 0'), promiseBase('amount > 0')]).then((values) =>
+      resolve({
+        grossExpenses: values[0],
+        grossIncome: values[1],
+        netIncome: values[1] - values[0]
+      })
+    )
+  })
+}
 
 export async function getDuplicateTransactions(
   db: Database,
