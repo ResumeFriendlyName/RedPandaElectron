@@ -11,7 +11,7 @@ export async function getCashFlowInDateRange(
     const promiseBase = (amountConditionalString: string): Promise<number> =>
       new Promise<number>((resolveValue) => {
         db.get(
-          `SELECT SUM(amount) FROM transactions WHERE date >= ? AND date >= ? AND ${amountConditionalString}`,
+          `SELECT SUM(amount) FROM transactions WHERE date BETWEEN ? AND ? AND ${amountConditionalString}`,
           [startDate, endDate],
           (err, value: number) => {
             if (err) {
@@ -24,8 +24,8 @@ export async function getCashFlowInDateRange(
 
     Promise.all([promiseBase('amount < 0'), promiseBase('amount > 0')]).then((values) => {
       const key = 'SUM(amount)'
-      const grossExpenses = Math.abs(values[0][key])
-      const grossIncome = values[1][key]
+      const grossExpenses = Math.abs(values[0][key]) ?? 0
+      const grossIncome = values[1][key] ?? 0
       resolve({
         grossExpenses: grossExpenses,
         grossIncome: grossIncome,
