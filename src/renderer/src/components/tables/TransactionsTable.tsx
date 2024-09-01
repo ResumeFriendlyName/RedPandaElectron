@@ -29,7 +29,7 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
         {props.transactionsWithTags.map((transactionWithTag) => (
           <Fragment key={`transaction_${transactionWithTag.transaction.id}`}>
             <tr>
-              <td>{transactionWithTag.transaction.date}</td>
+              <td className="whitespace-nowrap">{transactionWithTag.transaction.date}</td>
               <td>{transactionWithTag.transaction.description}</td>
               <td>{transactionWithTag.transaction.amount.toLocaleString()}</td>
               <td>{transactionWithTag.transaction.balance.toLocaleString()}</td>

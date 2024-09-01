@@ -10,7 +10,7 @@ const CashFlowWidget = (): JSX.Element => {
     const currentDate: string = new Date().toLocaleDateString()
     window.api
       .getCashFlow('01/01/1900', currentDate)
-      .then((response) => setCashFlow(response))
+      .then(setCashFlow)
       .catch((err: Error) => setErrorMsg(err.message))
   }, [])
 
