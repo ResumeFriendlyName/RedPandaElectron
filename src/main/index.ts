@@ -11,6 +11,7 @@ import Transaction from '../renderer/src/models/transaction'
 import ImportTransactionResponse from '../renderer/src/models/importTransactionResponse'
 import {
   deleteTransactions,
+  getCashFlowInDateRange,
   getDuplicateTransactions,
   getTransactions,
   getTransactionsCount,
@@ -20,6 +21,7 @@ import { getUserSettings, updateUserSettings } from './cores/dbCore/dbCoreUserSe
 import {
   deleteTag,
   deleteTagAndTransaction,
+  getTagAmounts,
   getTags,
   getTagsWithTransactions,
   insertTag,
@@ -27,6 +29,8 @@ import {
   updateTag
 } from './cores/dbCore/dbCoreTags'
 import Tag from '../renderer/src/models/tag'
+import CashFlow from '../renderer/src/models/cashflow'
+import TagAmount from '../renderer/src/models/tagAmount'
 
 function createWindow(): void {
   // Create the browser window.
@@ -124,10 +128,14 @@ app.whenReady().then(() => {
       }
     }
   )
-
   ipcMain.handle(
     'db:deleteTransactions',
     (_, ids: number[]): Promise<void> => deleteTransactions(db, ids)
+  )
+  ipcMain.handle(
+    'db:getCashFlow',
+    (_, startDate: string, endDate: string): Promise<CashFlow> =>
+      getCashFlowInDateRange(db, startDate, endDate)
   )
 
   ipcMain.handle('db:getUserSettings', (): Promise<UserSettings> => getUserSettings(db))
@@ -136,6 +144,10 @@ app.whenReady().then(() => {
     (_, userSettings: UserSettings): Promise<void> => updateUserSettings(db, userSettings)
   )
 
+  ipcMain.handle('db:getTagAmounts', async (_, startDate, endDate): Promise<TagAmount[]> => {
+    const tags: Tag[] = await getTags(db, '')
+    return await getTagAmounts(db, tags, startDate, endDate)
+  })
   ipcMain.handle('db:getTags', (_, nameFilter: string): Promise<Tag[]> => getTags(db, nameFilter))
   ipcMain.handle('db:insertTag', (_, tag: Tag): Promise<number> => insertTag(db, tag))
   ipcMain.handle('db:updateTag', (_, tag: Tag): Promise<void> => updateTag(db, tag))

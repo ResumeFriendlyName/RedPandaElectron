@@ -24,9 +24,9 @@ const TransactionsWidget = (): JSX.Element => {
   }, [])
 
   return (
-    <div className="widget min-w-[25rem] max-w-lg">
+    <div className="widget min-w-[25rem] max-w-xl">
       <div className="widget-header">
-        <h3>Recent transactions</h3>
+        <h3>Recent Transactions</h3>
         <button className="btn btn-sm" onClick={(): void => navigate('transactions')}>
           <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
         </button>
