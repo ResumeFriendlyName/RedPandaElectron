@@ -7,9 +7,9 @@ const CashFlowWidget = (): JSX.Element => {
   const [errorMsg, setErrorMsg] = useState<string>('')
 
   useEffect(() => {
-    const currentDate: string = new Date().toLocaleDateString()
+    const currentDate: string = new Date().toISOString()
     window.api
-      .getCashFlow('01/01/1900', currentDate)
+      .getCashFlow('1900-01-01', currentDate)
       .then(setCashFlow)
       .catch((err: Error) => setErrorMsg(err.message))
   }, [])

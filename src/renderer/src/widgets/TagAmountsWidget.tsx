@@ -7,9 +7,12 @@ const TagAmountsWidget = (): JSX.Element => {
   const [tagAmounts, setTagAmounts] = useState<TagAmount[]>()
 
   useEffect(() => {
-    const currentDate: string = new Date().toISOString()
+    const currentDate: Date = new Date()
+    const lastMonth: Date = new Date(currentDate)
+    lastMonth.setMonth(currentDate.getMonth() - 1)
+
     window.api
-      .getTagAmounts('1900-01-01', currentDate)
+      .getTagAmounts(lastMonth.toISOString(), currentDate.toISOString())
       .then((response) =>
         setTagAmounts(
           response.filter((tagAmount) => tagAmount.amount < 0).sort((a, b) => a.amount - b.amount)
@@ -21,7 +24,7 @@ const TagAmountsWidget = (): JSX.Element => {
   return (
     <div className="widget min-w-[25rem] max-w-lg">
       <div className="widget-header">
-        <h3>Most Expensive Tags</h3>
+        <h3>This Month's Priciest Tags</h3>
       </div>
       <div>
         <table className="table table-hover w-full text-primary-content">
