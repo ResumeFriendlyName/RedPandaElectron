@@ -30,7 +30,7 @@ export function getTagAmounts(
           }
         )
       })
-    resolve(Promise.all(tags.map((tag) => promiseBase(tag))))
+    resolve(Promise.all(tags.map(promiseBase)))
   })
 }
 

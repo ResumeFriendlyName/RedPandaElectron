@@ -146,7 +146,7 @@ app.whenReady().then(() => {
 
   ipcMain.handle('db:getTagAmounts', async (_, startDate, endDate): Promise<TagAmount[]> => {
     const tags: Tag[] = await getTags(db, '')
-    return await getTagAmounts(db, tags, startDate, endDate)
+    return getTagAmounts(db, tags, startDate, endDate)
   })
   ipcMain.handle('db:getTags', (_, nameFilter: string): Promise<Tag[]> => getTags(db, nameFilter))
   ipcMain.handle('db:insertTag', (_, tag: Tag): Promise<number> => insertTag(db, tag))
