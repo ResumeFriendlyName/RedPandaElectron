@@ -44,6 +44,7 @@ const TagRuleDropdownAndInfo = (props: TagRuleDropdownAndInfoProps): JSX.Element
         maxLength={20}
         dropdownItems={tags.map((tag) => tag.name)}
         width={16}
+        disableNewItem
         handleInput={handleTagInput}
         handleSelect={handleSelect}
       />

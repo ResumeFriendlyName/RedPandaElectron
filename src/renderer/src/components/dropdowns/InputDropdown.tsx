@@ -9,6 +9,7 @@ interface InputDropdownProps {
   maxLength: number
   width: number
   className?: string
+  disableNewItem?: boolean
   excludedItems?: Set<string>
   handleInput: (value: string) => void
   handleSelect: (value: string) => void
@@ -100,7 +101,8 @@ const InputDropdown = (props: InputDropdownProps): JSX.Element => {
                   </li>
                 )
             )
-          : props.input !== '' &&
+          : !props.disableNewItem &&
+            props.input !== '' &&
             !props.excludedItems?.has(props.input) && (
               <li
                 className="badge after:content-['NEW']"
