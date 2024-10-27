@@ -51,12 +51,14 @@ const TagRuleDropdownAndInfo = (props: TagRuleDropdownAndInfoProps): JSX.Element
         headingText={'Auto Rule Info'}
         content={
           <p>
-            Add a rule for a tag that can be applied to existing or imported transactions that will
-            automatically apply one or more tags to transactions that satisfy a set of rules.
-            <b> Similar to the rules in Outlook.</b>
+            Add a rule for a tag that <b>will</b> be applied to existing and imported transactions.
+            <br />
+            Rules will be automatically applied to any matching transactions.
+            <br />
+            <b>Similar to the rules in Outlook.</b>
           </p>
         }
-        modalClassName="w-[40rem]"
+        modalClassName="w-[41rem]"
       />
       {selectedTag !== undefined && (
         <TagRuleModal
