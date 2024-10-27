@@ -4,13 +4,22 @@ import WidgetHeader from '@renderer/components/common/WidgetHeader'
 import UserSettings from '@renderer/models/userSettings'
 import { useEffect, useState } from 'react'
 import BankPrefDropdownAndInfo from '@renderer/components/dropdowns/BankPrefDropdownAndInfo'
-import AllTags from '@renderer/components/AllTags'
+import AllTags from '@renderer/components/dropdowns/AllTagsDropdownAndInfo'
 import TagRuleDropdownAndInfo from '@renderer/components/dropdowns/TagRuleDropdownAndInfo'
+import Tag from '@renderer/models/tag'
 
 const SettingsView = (): JSX.Element => {
   const [userSettings, setUserSettings] = useState<UserSettings>()
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
+  const [tags, setTags] = useState<Tag[]>([])
+
+  const handleFetchTags = (): void => {
+    window.api
+      .getTags()
+      .then(setTags)
+      .catch((err: Error) => setErrorMsg(err.message))
+  }
 
   const handleUserSettings = (value: UserSettings): void => {
     setUserSettings(value)
@@ -22,12 +31,15 @@ const SettingsView = (): JSX.Element => {
   }
 
   useEffect(() => {
+    // TODO: Is this loading actually doing anything?
     setLoading(true)
     window.api
       .getUserSettings()
       .then((value) => setUserSettings(value))
       .catch((err: Error) => setErrorMsg(err.message))
       .finally(() => setLoading(false))
+
+    handleFetchTags()
   }, [])
 
   return (
@@ -54,14 +66,18 @@ const SettingsView = (): JSX.Element => {
             <tr>
               <td className="font-semibold select-none">Tags</td>
               <td>
-                <AllTags handleErrorMessage={(value): void => setErrorMsg(value)} />
+                <AllTags
+                  tags={tags}
+                  handleFetchTags={handleFetchTags}
+                  handleError={(err: Error): void => setErrorMsg(err.message)}
+                />
               </td>
             </tr>
             {/* Auto tag setting */}
             <tr>
               <td className="font-semibold select-none">Auto Tag Rules</td>
               <td>
-                <TagRuleDropdownAndInfo />
+                <TagRuleDropdownAndInfo tags={tags} />
               </td>
             </tr>
           </tbody>

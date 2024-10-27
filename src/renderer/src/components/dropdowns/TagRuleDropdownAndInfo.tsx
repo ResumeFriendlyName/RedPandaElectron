@@ -6,8 +6,12 @@ import InfoButton from '../buttons/InfoButton'
 import TagRuleModal from '../modals/TagRuleModal'
 import { getTagFromString } from '@renderer/utils/TagUtils'
 
-const TagRuleDropdownAndInfo = (): JSX.Element => {
-  const [tags, setTags] = useState<Tag[]>([])
+interface TagRuleDropdownAndInfoProps {
+  tags: Tag[]
+}
+
+const TagRuleDropdownAndInfo = (props: TagRuleDropdownAndInfoProps): JSX.Element => {
+  const [tags, setTags] = useState<Tag[]>(props.tags)
   const [selectedTag, setSelectedTag] = useState<Tag | undefined>(undefined)
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [tagInput, setTagInput] = useState<string>('')
@@ -24,6 +28,7 @@ const TagRuleDropdownAndInfo = (): JSX.Element => {
   const handleError = (err: Error): void => setErrorMsg(err.message)
   const handleClose = (): void => setSelectedTag(undefined)
 
+  useEffect(() => setTags(props.tags), [props.tags])
   useEffect(() => {
     window.api
       .getTags(tagInput)
