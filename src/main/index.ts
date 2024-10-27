@@ -21,16 +21,21 @@ import { getUserSettings, updateUserSettings } from './cores/dbCore/dbCoreUserSe
 import {
   deleteTag,
   deleteTagAndTransaction,
+  deleteTagRule,
   getTagAmounts,
+  getTagRuleForTagId,
   getTags,
   getTagsWithTransactions,
   insertTag,
   insertTagAndTransaction,
-  updateTag
+  insertTagRule,
+  updateTag,
+  updateTagRule
 } from './cores/dbCore/dbCoreTags'
 import Tag from '../renderer/src/models/tag'
 import CashFlow from '../renderer/src/models/cashflow'
 import TagAmount from '../renderer/src/models/tagAmount'
+import TagRule from '../renderer/src/models/tagRule'
 
 function createWindow(): void {
   // Create the browser window.
@@ -148,10 +153,12 @@ app.whenReady().then(() => {
     const tags: Tag[] = await getTags(db, '')
     return getTagAmounts(db, tags, startDate, endDate)
   })
+
   ipcMain.handle('db:getTags', (_, nameFilter: string): Promise<Tag[]> => getTags(db, nameFilter))
   ipcMain.handle('db:insertTag', (_, tag: Tag): Promise<number> => insertTag(db, tag))
   ipcMain.handle('db:updateTag', (_, tag: Tag): Promise<void> => updateTag(db, tag))
   ipcMain.handle('db:deleteTag', (_, id: number): Promise<void> => deleteTag(db, id))
+
   ipcMain.handle(
     'db:insertTagWithTransaction',
     async (_, tag: Tag, transaction: Transaction): Promise<void> => {
@@ -166,6 +173,20 @@ app.whenReady().then(() => {
     (_, tagId: number, transactionId: number): Promise<void> =>
       deleteTagAndTransaction(db, tagId, transactionId)
   )
+
+  ipcMain.handle(
+    'db:getTagRuleForTagId',
+    async (_, tagId: number): Promise<TagRule | undefined> => getTagRuleForTagId(db, tagId)
+  )
+  ipcMain.handle(
+    'db:updateTagRule',
+    (_, id: number, values: string[]): Promise<void> => updateTagRule(db, id, values)
+  )
+  ipcMain.handle(
+    'db:insertTagRule',
+    async (_, tagId: number, values: string[]): Promise<void> => insertTagRule(db, tagId, values)
+  )
+  ipcMain.handle('db:deleteTagRule', async (_, id: number) => deleteTagRule(db, id))
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common

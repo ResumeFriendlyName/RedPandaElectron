@@ -7,6 +7,7 @@ import Tag from '../renderer/src/models/tag'
 import Transaction from '../renderer/src/models/transaction'
 import CashFlow from '../renderer/src/models/cashflow'
 import TagAmount from '../renderer/src/models/tagAmount'
+import TagRule from '../renderer/src/models/tagRule'
 
 // Custom APIs for renderer
 const api = {
@@ -34,7 +35,15 @@ const api = {
   insertTagWithTransaction: (tag: Tag, transaction: Transaction): Promise<void> =>
     ipcRenderer.invoke('db:insertTagWithTransaction', tag, transaction),
   deleteTagWithTransaction: (tagId: number, transactionId: number): Promise<void> =>
-    ipcRenderer.invoke('db:deleteTagWithTransaction', tagId, transactionId)
+    ipcRenderer.invoke('db:deleteTagWithTransaction', tagId, transactionId),
+  /* TagRule API */
+  getTagRuleForTagId: (tagId: number): Promise<TagRule | undefined> =>
+    ipcRenderer.invoke('db:getTagRuleForTagId', tagId),
+  updateTagRule: (id: number, values: string[]): Promise<void> =>
+    ipcRenderer.invoke('db:updateTagRule', id, values),
+  insertTagRule: (tagId: number, values: string[]): Promise<void> =>
+    ipcRenderer.invoke('db:insertTagRule', tagId, values),
+  deleteTagRule: (id: number): Promise<void> => ipcRenderer.invoke('db:deleteTagRule', id)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

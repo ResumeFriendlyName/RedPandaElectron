@@ -22,6 +22,11 @@ interface API {
   getTagAmounts: (startDate: string, endDate: string) => Promise<TagAmount[]>
   insertTagWithTransaction: (tag: Tag, transaction: Transaction) => Promise<void>
   deleteTagWithTransaction: (tagId: number, transactionId: number) => Promise<void>
+  /* TagRule API */
+  getTagRuleForTagId: (tagId: number) => Promise<TagRule | undefined>
+  updateTagRule: (id: number, values: string[]) => Promise<void>
+  insertTagRule: (tagId: number, values: string[]) => Promise<void>
+  deleteTagRule: (id: number) => Promise<void>
 }
 
 declare global {
