@@ -89,7 +89,7 @@ const InputDropdown = (props: InputDropdownProps): JSX.Element => {
         style={{
           height: dropdownHeight
         }}
-        className="dropdown-content text-center overflow-y-scroll"
+        className="dropdown-content text-center overflow-y-auto"
       >
         {props.dropdownItems.length > 0
           ? props.dropdownItems.map(
