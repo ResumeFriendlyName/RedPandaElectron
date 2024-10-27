@@ -5,6 +5,7 @@ import UserSettings from '@renderer/models/userSettings'
 import { useEffect, useState } from 'react'
 import BankPrefDropdownAndInfo from '@renderer/components/dropdowns/BankPrefDropdownAndInfo'
 import AllTags from '@renderer/components/AllTags'
+import TagRuleDropdownAndInfo from '@renderer/components/dropdowns/TagRuleDropdownAndInfo'
 
 const SettingsView = (): JSX.Element => {
   const [userSettings, setUserSettings] = useState<UserSettings>()
@@ -54,6 +55,13 @@ const SettingsView = (): JSX.Element => {
               <td className="font-semibold select-none">Tags</td>
               <td>
                 <AllTags handleErrorMessage={(value): void => setErrorMsg(value)} />
+              </td>
+            </tr>
+            {/* Auto tag setting */}
+            <tr>
+              <td className="font-semibold select-none">Auto Tag Rules</td>
+              <td>
+                <TagRuleDropdownAndInfo />
               </td>
             </tr>
           </tbody>
