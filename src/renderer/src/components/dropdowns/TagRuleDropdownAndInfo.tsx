@@ -25,8 +25,22 @@ const TagRuleDropdownAndInfo = (props: TagRuleDropdownAndInfoProps): JSX.Element
       setSelectedTag(tag)
     }
   }
-  const handleError = (err: Error): void => setErrorMsg(err.message)
-  const handleClose = (): void => setSelectedTag(undefined)
+  const handleCancel = (): void => setSelectedTag(undefined)
+  const handleError = (err: Error): void => {
+    setSelectedTag(undefined)
+    setErrorMsg(err.message)
+  }
+  const handleSubmit = (tagRuleId: number): void => {
+    window.api
+      .applyTagRuleToTransactions(tagRuleId)
+      // TODO: At some point display to the user how many changes were made
+      // .then((count) => console.log(count))
+      .catch((err: Error) => setErrorMsg(err.message))
+      .finally(() => setSelectedTag(undefined))
+  }
+  // Incase you want to delete all associated tags, but the alternative for now
+  // is just deleting that tag and starting over again. Will revisit if is an issue
+  const handleDelete = (): void => setSelectedTag(undefined)
 
   useEffect(() => setTags(props.tags), [props.tags])
   useEffect(() => {
@@ -65,7 +79,9 @@ const TagRuleDropdownAndInfo = (props: TagRuleDropdownAndInfoProps): JSX.Element
         <TagRuleModal
           open={true}
           tag={selectedTag}
-          handleClose={handleClose}
+          handleCancel={handleCancel}
+          handleSubmit={handleSubmit}
+          handleDelete={handleDelete}
           handleError={handleError}
         />
       )}

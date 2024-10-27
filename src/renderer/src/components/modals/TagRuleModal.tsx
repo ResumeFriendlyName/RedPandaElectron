@@ -8,7 +8,9 @@ import TagRule from '@renderer/models/tagRule'
 interface TagRuleModalProps {
   open: boolean
   tag: Tag
-  handleClose: () => void
+  handleCancel: () => void
+  handleDelete: () => void
+  handleSubmit: (tagRuleId: number) => void
   handleError: (err: Error) => void
 }
 
@@ -18,7 +20,7 @@ const TagRuleModal = (props: TagRuleModalProps): JSX.Element => {
   const handleInput = (value: string): void => setInput(value)
   const handleCancel = (): void => {
     setInput('')
-    props.handleClose()
+    props.handleCancel()
   }
   const handleSubmit = (): void => {
     const value = input.trim()
@@ -27,18 +29,22 @@ const TagRuleModal = (props: TagRuleModalProps): JSX.Element => {
       if (tagRule) {
         window.api
           .updateTagRule(tagRule.id, values)
-          .then(props.handleClose)
+          .then(() => props.handleSubmit(tagRule.id))
           .catch(props.handleError)
       } else {
         window.api
           .insertTagRule(props.tag.id, values)
-          .then(props.handleClose)
+          .then(props.handleSubmit)
           .catch(props.handleError)
       }
     } else if (tagRule) {
-      window.api.deleteTagRule(tagRule.id).then(props.handleClose).catch(props.handleError)
+      window.api
+        .deleteTagRule(tagRule.id)
+        .then(() => props.handleDelete())
+        .catch(props.handleError)
     } else {
-      props.handleClose()
+      // Cancel if no value was set and a tag rule didn't previously exist
+      props.handleCancel()
     }
   }
 

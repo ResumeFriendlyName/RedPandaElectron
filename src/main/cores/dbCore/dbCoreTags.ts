@@ -37,9 +37,17 @@ export function getTagAmounts(
   })
 }
 
+export function getTag(db: Database, id: number): Promise<Tag> {
+  return new Promise<Tag>((resolve, reject) => {
+    db.get(`SELECT * FROM tags WHERE id = ?`, [id], (err: Error, row: Tag) =>
+      err ? reject(err) : resolve(row)
+    )
+  })
+}
+
 export function getTags(db: Database, nameFilter: string): Promise<Tag[]> {
-  const wildCardName = `%${nameFilter}%`
   return new Promise<Tag[]>((resolve, reject) => {
+    const wildCardName = `%${nameFilter}%`
     db.all(
       `SELECT * FROM tags WHERE "name" LIKE ? ORDER BY name ASC`,
       [wildCardName],
@@ -152,6 +160,50 @@ export function insertTagAndTransaction(
   })
 }
 
+export async function applyTagRuleToTransactions(db: Database, id: number): Promise<number> {
+  return new Promise<number>((resolve, reject) => {
+    db.serialize(async () => {
+      const tagRule = await getTagRule(db, id)
+      const tag = await getTag(db, tagRule.tagId)
+
+      const promiseBase = (ruleValue: string): Promise<void> =>
+        new Promise<void>((resolveBase) => {
+          db.run(
+            `
+            INSERT OR IGNORE INTO tagsAndTransactions (tagId, transactionId)
+            SELECT ?, t.id
+            FROM transactions t 
+            WHERE INSTR(LOWER(?), LOWER(t.description)) > 0`,
+            [tag.id, ruleValue],
+            (_, err: Error) => (err ? reject(err) : resolveBase())
+          )
+        })
+
+      await Promise.all(tagRule.values.map(promiseBase))
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      db.get(`SELECT changes() AS count`, (err: Error, row: any) =>
+        err ? reject(err) : resolve(row.count)
+      )
+    })
+  })
+}
+
+export function getTagRule(db: Database, id: number): Promise<TagRule> {
+  return new Promise<TagRule>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    db.get(`SELECT * FROM tagRules WHERE id = ?`, [id], (err, row: any) =>
+      err
+        ? reject(err)
+        : resolve({
+            id: row.id,
+            tagId: row.tagId,
+            values: row.rule_values.split(tagRuleDelimiter)
+          })
+    )
+  })
+}
+
 export function getTagRuleForTagId(db: Database, tagId: number): Promise<TagRule | undefined> {
   return new Promise<TagRule | undefined>((resolve, reject) => {
     // Need this to transform rule_values name to values
@@ -169,21 +221,26 @@ export function getTagRuleForTagId(db: Database, tagId: number): Promise<TagRule
 }
 
 export function updateTagRule(db: Database, id: number, values: string[]): Promise<void> {
-  const merged_values = values.join(tagRuleDelimiter)
   return new Promise<void>((resolve, reject) => {
+    const merged_values = values.join(tagRuleDelimiter)
     db.run(`UPDATE tagRules SET rule_values = ? WHERE id = ?`, [merged_values, id], (err) =>
       err ? reject(err) : resolve()
     )
   })
 }
 
-export function insertTagRule(db: Database, tagId: number, values: string[]): Promise<void> {
-  const merged_values = values.join(tagRuleDelimiter)
-  return new Promise<void>((resolve, reject) => {
+export function insertTagRule(db: Database, tagId: number, values: string[]): Promise<number> {
+  return new Promise<number>((resolve, reject) => {
+    const merged_values = values.join(tagRuleDelimiter)
     db.run(
       `INSERT INTO tagRules(tagId, rule_values) VALUES(?, ?)`,
       [tagId, merged_values],
-      (_, err: Error) => (err ? reject(err) : resolve())
+      function (this: RunResult, err: Error) {
+        if (err) {
+          reject(err)
+        }
+        resolve(this.lastID)
+      }
     )
   })
 }

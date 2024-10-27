@@ -37,11 +37,13 @@ const api = {
   deleteTagWithTransaction: (tagId: number, transactionId: number): Promise<void> =>
     ipcRenderer.invoke('db:deleteTagWithTransaction', tagId, transactionId),
   /* TagRule API */
+  applyTagRuleToTransactions: (id: number): Promise<number> =>
+    ipcRenderer.invoke('db:applyTagRuleToTransactions', id),
   getTagRuleForTagId: (tagId: number): Promise<TagRule | undefined> =>
     ipcRenderer.invoke('db:getTagRuleForTagId', tagId),
   updateTagRule: (id: number, values: string[]): Promise<void> =>
     ipcRenderer.invoke('db:updateTagRule', id, values),
-  insertTagRule: (tagId: number, values: string[]): Promise<void> =>
+  insertTagRule: (tagId: number, values: string[]): Promise<number> =>
     ipcRenderer.invoke('db:insertTagRule', tagId, values),
   deleteTagRule: (id: number): Promise<void> => ipcRenderer.invoke('db:deleteTagRule', id)
 }

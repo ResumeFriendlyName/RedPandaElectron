@@ -19,6 +19,7 @@ import {
 } from './cores/dbCore/dbCoreTransactions'
 import { getUserSettings, updateUserSettings } from './cores/dbCore/dbCoreUserSettings'
 import {
+  applyTagRuleToTransactions,
   deleteTag,
   deleteTagAndTransaction,
   deleteTagRule,
@@ -175,6 +176,10 @@ app.whenReady().then(() => {
   )
 
   ipcMain.handle(
+    'db:applyTagRuleToTransactions',
+    async (_, id: number): Promise<number> => applyTagRuleToTransactions(db, id)
+  )
+  ipcMain.handle(
     'db:getTagRuleForTagId',
     async (_, tagId: number): Promise<TagRule | undefined> => getTagRuleForTagId(db, tagId)
   )
@@ -184,7 +189,7 @@ app.whenReady().then(() => {
   )
   ipcMain.handle(
     'db:insertTagRule',
-    async (_, tagId: number, values: string[]): Promise<void> => insertTagRule(db, tagId, values)
+    async (_, tagId: number, values: string[]): Promise<number> => insertTagRule(db, tagId, values)
   )
   ipcMain.handle('db:deleteTagRule', async (_, id: number) => deleteTagRule(db, id))
 })

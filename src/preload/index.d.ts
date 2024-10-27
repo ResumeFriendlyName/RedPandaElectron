@@ -23,9 +23,10 @@ interface API {
   insertTagWithTransaction: (tag: Tag, transaction: Transaction) => Promise<void>
   deleteTagWithTransaction: (tagId: number, transactionId: number) => Promise<void>
   /* TagRule API */
+  applyTagRuleToTransactions: (id: number) => Promise<number>
   getTagRuleForTagId: (tagId: number) => Promise<TagRule | undefined>
   updateTagRule: (id: number, values: string[]) => Promise<void>
-  insertTagRule: (tagId: number, values: string[]) => Promise<void>
+  insertTagRule: (tagId: number, values: string[]) => Promise<number>
   deleteTagRule: (id: number) => Promise<void>
 }
 
