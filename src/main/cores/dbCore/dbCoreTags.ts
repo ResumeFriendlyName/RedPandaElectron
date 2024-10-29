@@ -236,12 +236,9 @@ export function insertTagRuleForTagId(
     const insertPromises = values.map(
       (value) =>
         new Promise<void>((resolveInsert) => {
-          db.run(`INSERT INTO tagRules(tagId, ruleValue) VALUES (?, ?)`, [tagId, value], (err) => {
-            if (err) {
-              reject(err)
-            }
-            resolveInsert()
-          })
+          db.run(`INSERT INTO tagRules(tagId, ruleValue) VALUES (?, ?)`, [tagId, value], (err) =>
+            err ? reject(err) : resolveInsert()
+          )
         })
     )
 
