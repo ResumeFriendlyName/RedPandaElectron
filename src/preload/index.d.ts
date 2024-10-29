@@ -23,11 +23,11 @@ interface API {
   insertTagWithTransaction: (tag: Tag, transaction: Transaction) => Promise<void>
   deleteTagWithTransaction: (tagId: number, transactionId: number) => Promise<void>
   /* TagRule API */
-  applyTagRuleToTransactions: (id: number) => Promise<number>
+  applyTagRuleToTransactions: (tagId: number) => Promise<number>
   getTagRuleForTagId: (tagId: number) => Promise<TagRule | undefined>
-  updateTagRule: (id: number, values: string[]) => Promise<void>
-  insertTagRule: (tagId: number, values: string[]) => Promise<number>
-  deleteTagRule: (id: number) => Promise<void>
+  updateTagRuleForTagId: (tagId: number, values: string[]) => Promise<void>
+  insertTagRuleForTagId: (tagId: number, values: string[]) => Promise<void>
+  deleteTagRuleForTagId: (tagId: number) => Promise<void>
 }
 
 declare global {

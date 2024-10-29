@@ -28,18 +28,18 @@ const TagRuleModal = (props: TagRuleModalProps): JSX.Element => {
       const values = value.split('\n')
       if (tagRule) {
         window.api
-          .updateTagRule(tagRule.id, values)
-          .then(() => props.handleSubmit(tagRule.id))
+          .updateTagRuleForTagId(tagRule.tagId, values)
+          .then(() => props.handleSubmit(tagRule.tagId))
           .catch(props.handleError)
       } else {
         window.api
-          .insertTagRule(props.tag.id, values)
-          .then(props.handleSubmit)
+          .insertTagRuleForTagId(props.tag.id, values)
+          .then(() => props.handleSubmit(props.tag.id))
           .catch(props.handleError)
       }
     } else if (tagRule) {
       window.api
-        .deleteTagRule(tagRule.id)
+        .deleteTagRuleForTagId(tagRule.tagId)
         .then(() => props.handleDelete())
         .catch(props.handleError)
     } else {

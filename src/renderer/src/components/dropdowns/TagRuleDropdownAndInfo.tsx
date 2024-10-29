@@ -30,9 +30,9 @@ const TagRuleDropdownAndInfo = (props: TagRuleDropdownAndInfoProps): JSX.Element
     setSelectedTag(undefined)
     setErrorMsg(err.message)
   }
-  const handleSubmit = (tagRuleId: number): void => {
+  const handleSubmit = (tagId: number): void => {
     window.api
-      .applyTagRuleToTransactions(tagRuleId)
+      .applyTagRuleToTransactions(tagId)
       // TODO: At some point display to the user how many changes were made
       // .then((count) => console.log(count))
       .catch((err: Error) => setErrorMsg(err.message))

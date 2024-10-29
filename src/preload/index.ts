@@ -37,15 +37,16 @@ const api = {
   deleteTagWithTransaction: (tagId: number, transactionId: number): Promise<void> =>
     ipcRenderer.invoke('db:deleteTagWithTransaction', tagId, transactionId),
   /* TagRule API */
-  applyTagRuleToTransactions: (id: number): Promise<number> =>
-    ipcRenderer.invoke('db:applyTagRuleToTransactions', id),
+  applyTagRuleToTransactions: (tagId: number): Promise<number> =>
+    ipcRenderer.invoke('db:applyTagRuleToTransactions', tagId),
   getTagRuleForTagId: (tagId: number): Promise<TagRule | undefined> =>
     ipcRenderer.invoke('db:getTagRuleForTagId', tagId),
-  updateTagRule: (id: number, values: string[]): Promise<void> =>
-    ipcRenderer.invoke('db:updateTagRule', id, values),
-  insertTagRule: (tagId: number, values: string[]): Promise<number> =>
-    ipcRenderer.invoke('db:insertTagRule', tagId, values),
-  deleteTagRule: (id: number): Promise<void> => ipcRenderer.invoke('db:deleteTagRule', id)
+  updateTagRuleForTagId: (tagId: number, values: string[]): Promise<void> =>
+    ipcRenderer.invoke('db:updateTagRuleForTagId', tagId, values),
+  insertTagRuleForTagId: (tagId: number, values: string[]): Promise<void> =>
+    ipcRenderer.invoke('db:insertTagRuleForTagId', tagId, values),
+  deleteTagRuleForTagId: (tagId: number): Promise<void> =>
+    ipcRenderer.invoke('db:deleteTagRuleForTagId', tagId)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
