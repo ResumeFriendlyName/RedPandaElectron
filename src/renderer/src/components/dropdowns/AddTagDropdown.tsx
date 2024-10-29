@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { ErrorModal } from '../modals/StatusModals'
 import InputDropdown from './InputDropdown'
 import TransactionWithTags from '@renderer/models/transactionWithTags'
+import { getTagFromString } from '@renderer/utils/TagUtils'
 
 interface AddTagDropdownProps {
   tags?: Tag[]
@@ -55,7 +56,7 @@ const AddTagDropdown = (props: AddTagDropdownProps): JSX.Element => {
         width={16}
         handleInput={handleTagInput}
         handleSelect={(value: string): void => {
-          const tag: Tag | undefined = tags.find((tag) => tag.name == value)
+          const tag: Tag | undefined = getTagFromString(tags, value)
           props.handleSelect(tag !== undefined ? tag : { id: -1, name: value })
         }}
       />

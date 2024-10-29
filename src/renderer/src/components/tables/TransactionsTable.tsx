@@ -1,6 +1,6 @@
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import TagChip from '../TagChip'
+import TagChip from '@renderer/components/chips/TagChip'
 import TransactionWithTags from '@renderer/models/transactionWithTags'
 import { Fragment } from 'react'
 import AddTagButton from '../dropdowns/AddTagDropdown'

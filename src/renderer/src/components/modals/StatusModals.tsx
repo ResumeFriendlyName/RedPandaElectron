@@ -68,7 +68,7 @@ const StatusChoiceModal = (props: StatusChoiceModalProps): JSX.Element => {
           props.handleChoice(false)
         }}
       >
-        {props.noChoiceName}
+        <span>{props.noChoiceName}</span>
       </button>
       <button
         className="btn btn-sm"
@@ -77,7 +77,7 @@ const StatusChoiceModal = (props: StatusChoiceModalProps): JSX.Element => {
           props.handleChoice(true)
         }}
       >
-        {props.yesChoiceName}
+        <span>{props.yesChoiceName}</span>
       </button>
     </BaseModal>
   )
@@ -138,6 +138,7 @@ interface WarningModalProps {
   open: boolean
   yesChoiceName: string
   noChoiceName: string
+  headingText: string
   textElement: JSX.Element
   handleChoice: (value: boolean) => void
 }
@@ -146,7 +147,7 @@ const WarningModal = (props: WarningModalProps): JSX.Element => {
   return (
     <StatusChoiceModal
       open={props.open}
-      headingText="Warning"
+      headingText={props.headingText}
       content={props.textElement}
       icon={faTriangleExclamation}
       color="text-warning"

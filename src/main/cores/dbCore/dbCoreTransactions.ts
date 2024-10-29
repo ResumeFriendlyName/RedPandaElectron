@@ -1,8 +1,8 @@
-import { Database, RunResult } from 'sqlite3'
+import { Database } from 'sqlite3'
 import Transaction from '../../../renderer/src/models/transaction'
 import CashFlow from '../../../renderer/src/models/cashflow'
 
-export async function getCashFlowInDateRange(
+export function getCashFlowInDateRange(
   db: Database,
   startDate: string,
   endDate: string
@@ -35,7 +35,7 @@ export async function getCashFlowInDateRange(
   })
 }
 
-export async function getDuplicateTransactions(
+export function getDuplicateTransactions(
   db: Database,
   transactions: Transaction[]
 ): Promise<Transaction[]> {
@@ -67,7 +67,7 @@ export async function getDuplicateTransactions(
   })
 }
 
-export async function getTransactionsCount(db: Database): Promise<number> {
+export function getTransactionsCount(db: Database): Promise<number> {
   return new Promise<number>((resolve, reject) =>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     db.get('SELECT COUNT(id) FROM transactions', (err, count: any) => {
@@ -81,26 +81,41 @@ export async function getTransactionsCount(db: Database): Promise<number> {
 
 export function deleteTransactions(db: Database, ids: number[]): Promise<void> {
   return new Promise<void>((resolve, reject) => {
-    if (ids.length == 0) {
+    if (!ids.length) {
       resolve()
     }
 
-    db.serialize(() =>
-      ids.map((id, index) =>
-        db.run(`DELETE FROM transactions WHERE id = ?`, [id], (_, err: Error) => {
-          if (err) {
-            reject(err)
-          }
-          if (index === ids.length - 1) {
-            resolve()
-          }
+    const deletePromises = ids.map(
+      (id) =>
+        new Promise<void>((resolveDelete) => {
+          db.serialize(() => {
+            db.run(`DELETE FROM tagsAndTransactions WHERE transactionId = ?`, [id], (err) => {
+              if (err) {
+                reject(err)
+              }
+            })
+            db.run(`DELETE FROM transactions WHERE id = ?`, [id], (err) =>
+              err ? reject(err) : resolveDelete()
+            )
+          })
         })
-      )
+    )
+
+    Promise.all(deletePromises)
+      .then(() => resolve())
+      .catch(reject)
+  })
+}
+
+export function getTransaction(db: Database, id: number): Promise<Transaction> {
+  return new Promise<Transaction>((resolve, reject) => {
+    db.get(`SELECT * FROM transactions WHERE id = ?`, [id], (err: Error, row: Transaction) =>
+      err ? reject(err) : resolve(row)
     )
   })
 }
 
-export async function getTransactions(
+export function getTransactions(
   db: Database,
   amount: number,
   offset: number
@@ -131,7 +146,7 @@ export async function insertTransactions(
         db.run(
           `INSERT INTO transactions(date, description, amount, balance) VALUES(?, ?, ?, ?)`,
           [transaction.date, transaction.description, transaction.amount, transaction.balance],
-          function (this: RunResult, err: Error | null) {
+          function (err) {
             if (err) {
               reject(err)
             } else {

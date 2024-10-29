@@ -9,6 +9,7 @@ interface InputDropdownProps {
   maxLength: number
   width: number
   className?: string
+  disableNewItem?: boolean
   excludedItems?: Set<string>
   handleInput: (value: string) => void
   handleSelect: (value: string) => void
@@ -89,7 +90,7 @@ const InputDropdown = (props: InputDropdownProps): JSX.Element => {
         style={{
           height: dropdownHeight
         }}
-        className="dropdown-content text-center overflow-y-scroll"
+        className="dropdown-content text-center overflow-y-auto"
       >
         {props.dropdownItems.length > 0
           ? props.dropdownItems.map(
@@ -100,7 +101,8 @@ const InputDropdown = (props: InputDropdownProps): JSX.Element => {
                   </li>
                 )
             )
-          : props.input !== '' &&
+          : !props.disableNewItem &&
+            props.input !== '' &&
             !props.excludedItems?.has(props.input) && (
               <li
                 className="badge after:content-['NEW']"

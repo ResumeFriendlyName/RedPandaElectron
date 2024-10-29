@@ -194,6 +194,7 @@ const TransactionsView = (): JSX.Element => {
         handleClose={(): void => {
           setDupeModalOpen(false)
           setDupeTransactions([])
+          getTransactions()
         }}
       />
 

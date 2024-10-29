@@ -1,4 +1,4 @@
-import QuickAccess from '@renderer/components/QuickAccess'
+import QuickAccess from '@renderer/components/navigation/QuickAccess'
 import { Outlet } from 'react-router-dom'
 
 const ViewLayout = (): JSX.Element => {

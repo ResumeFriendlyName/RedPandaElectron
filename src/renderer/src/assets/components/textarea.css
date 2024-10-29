@@ -1,0 +1,3 @@
+.textarea {
+  @apply text-primary-content border-2 border-accent rounded-md px-2 p-1;
+}

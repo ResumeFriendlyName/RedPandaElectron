@@ -19,18 +19,24 @@ import {
 } from './cores/dbCore/dbCoreTransactions'
 import { getUserSettings, updateUserSettings } from './cores/dbCore/dbCoreUserSettings'
 import {
+  applyTagRulesToTransactions,
+  applyTagRuleToTransactions,
   deleteTag,
   deleteTagAndTransaction,
+  deleteTagRuleForTagId,
   getTagAmounts,
+  getTagRuleForTagId,
   getTags,
   getTagsWithTransactions,
   insertTag,
   insertTagAndTransaction,
+  insertTagRuleForTagId,
   updateTag
 } from './cores/dbCore/dbCoreTags'
 import Tag from '../renderer/src/models/tag'
 import CashFlow from '../renderer/src/models/cashflow'
 import TagAmount from '../renderer/src/models/tagAmount'
+import TagRule from '../renderer/src/models/tagRule'
 
 function createWindow(): void {
   // Create the browser window.
@@ -90,12 +96,12 @@ app.whenReady().then(() => {
       if (stringTransactions.length > 0) {
         const transactions: Transaction[] = translateBATransactions(stringTransactions)
         const dupeTransactions: Transaction[] = await getDuplicateTransactions(db, transactions)
-
         const uniqueTransactions: Transaction[] = transactions.filter(
           (transaction) => !dupeTransactions.includes(transaction)
         )
-
         const transactionIds: number[] = await insertTransactions(db, uniqueTransactions)
+        await applyTagRulesToTransactions(db, transactionIds)
+
         return { transactionIds, dupeTransactions }
       }
 
@@ -148,10 +154,12 @@ app.whenReady().then(() => {
     const tags: Tag[] = await getTags(db, '')
     return getTagAmounts(db, tags, startDate, endDate)
   })
+
   ipcMain.handle('db:getTags', (_, nameFilter: string): Promise<Tag[]> => getTags(db, nameFilter))
   ipcMain.handle('db:insertTag', (_, tag: Tag): Promise<number> => insertTag(db, tag))
   ipcMain.handle('db:updateTag', (_, tag: Tag): Promise<void> => updateTag(db, tag))
   ipcMain.handle('db:deleteTag', (_, id: number): Promise<void> => deleteTag(db, id))
+
   ipcMain.handle(
     'db:insertTagWithTransaction',
     async (_, tag: Tag, transaction: Transaction): Promise<void> => {
@@ -165,6 +173,32 @@ app.whenReady().then(() => {
     'db:deleteTagWithTransaction',
     (_, tagId: number, transactionId: number): Promise<void> =>
       deleteTagAndTransaction(db, tagId, transactionId)
+  )
+
+  ipcMain.handle(
+    'db:applyTagRuleToTransactions',
+    async (_, tagId: number): Promise<number> => applyTagRuleToTransactions(db, tagId)
+  )
+  ipcMain.handle(
+    'db:getTagRuleForTagId',
+    async (_, tagId: number): Promise<TagRule | undefined> => getTagRuleForTagId(db, tagId)
+  )
+  ipcMain.handle(
+    'db:updateTagRuleForTagId',
+    async (_, tagId: number, values: string[]): Promise<void> => {
+      // This should be fine since I can't imagine there'll be loads of rules per tag
+      // Greatly simplifies logic around codebase, especially in the tagRuleModal
+      await deleteTagRuleForTagId(db, tagId)
+      await insertTagRuleForTagId(db, tagId, values)
+    }
+  )
+  ipcMain.handle(
+    'db:insertTagRuleForTagId',
+    async (_, tagId: number, values: string[]): Promise<void> =>
+      insertTagRuleForTagId(db, tagId, values)
+  )
+  ipcMain.handle('db:deleteTagRuleForTagId', async (_, tagId: number) =>
+    deleteTagRuleForTagId(db, tagId)
   )
 })
 

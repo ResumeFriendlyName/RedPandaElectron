@@ -19,12 +19,22 @@ export function setupDatabase(): Database {
   createUserSettingsTable(db)
   createTagsTable(db)
   createTagsAndTransactionsTable(db)
+  createTagRulesTable(db)
 
   return db
 }
 
 export function closeDatabase(db: Database): void {
   db.close()
+}
+
+function createTagRulesTable(db: Database): void {
+  // values is a reserved SQL keyword
+  db.run(`CREATE TABLE IF NOT EXISTS tagRules (
+    id INTEGER NOT NULL PRIMARY KEY,
+    tagId INTEGER NOT NULL,
+    ruleValue TEXT NOT NULL,
+    UNIQUE(tagId, ruleValue))`)
 }
 
 function createTagsAndTransactionsTable(db: Database): void {
