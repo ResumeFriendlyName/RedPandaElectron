@@ -1,4 +1,4 @@
-import { Database, RunResult } from 'sqlite3'
+import { Database } from 'sqlite3'
 import Transaction from '../../../renderer/src/models/transaction'
 import CashFlow from '../../../renderer/src/models/cashflow'
 
