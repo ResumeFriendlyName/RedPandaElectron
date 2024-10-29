@@ -32,8 +32,9 @@ function createTagRulesTable(db: Database): void {
   // values is a reserved SQL keyword
   db.run(`CREATE TABLE IF NOT EXISTS tagRules (
     id INTEGER NOT NULL PRIMARY KEY,
-    tagId INTEGER NOT NULL UNIQUE,
-    rule_values TEXT NOT NULL)`)
+    tagId INTEGER NOT NULL,
+    ruleValue TEXT NOT NULL,
+    UNIQUE(tagId, ruleValue))`)
 }
 
 function createTagsAndTransactionsTable(db: Database): void {
