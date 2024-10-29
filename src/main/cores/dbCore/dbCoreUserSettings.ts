@@ -14,15 +14,8 @@ export function getUserSettings(db: Database): Promise<UserSettings> {
 
 export function updateUserSettings(db: Database, userSettings: UserSettings): Promise<void> {
   return new Promise<void>((resolve, reject) =>
-    db.run(
-      `UPDATE userSettings SET bankPref = ? WHERE id = 1`,
-      [userSettings.bankPref],
-      (_, err: Error) => {
-        if (err) {
-          reject(err)
-        }
-        resolve()
-      }
+    db.run(`UPDATE userSettings SET bankPref = ? WHERE id = 1`, [userSettings.bankPref], (err) =>
+      err ? reject(err) : resolve()
     )
   )
 }
