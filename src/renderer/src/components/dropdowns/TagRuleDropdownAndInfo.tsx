@@ -1,26 +1,25 @@
 import { useEffect, useState } from 'react'
 import InputDropdown from './InputDropdown'
 import Tag from '@renderer/models/tag'
-import { ErrorModal } from '../modals/StatusModals'
 import InfoButton from '../buttons/InfoButton'
 import TagRuleModal from '../modals/TagRuleModal'
 import { getTagFromString } from '@renderer/utils/TagUtils'
 
 interface TagRuleDropdownAndInfoProps {
   tags: Tag[]
+  handleError: (err: Error) => void
 }
 
 const TagRuleDropdownAndInfo = (props: TagRuleDropdownAndInfoProps): JSX.Element => {
   const [tags, setTags] = useState<Tag[]>(props.tags)
   const [selectedTag, setSelectedTag] = useState<Tag | undefined>(undefined)
-  const [errorMsg, setErrorMsg] = useState<string>('')
   const [tagInput, setTagInput] = useState<string>('')
 
   const handleTagInput = (value: string): void => setTagInput(value)
   const handleSelect = (value: string): void => {
     const tag: Tag | undefined = getTagFromString(tags, value)
     if (tag === undefined) {
-      setErrorMsg(`Tag, "${value}" no longer exists. Please report this bug.`)
+      props.handleError(new Error(`Tag, "${value}" no longer exists. Please report this bug.`))
     } else {
       setSelectedTag(tag)
     }
@@ -28,14 +27,14 @@ const TagRuleDropdownAndInfo = (props: TagRuleDropdownAndInfoProps): JSX.Element
   const handleCancel = (): void => setSelectedTag(undefined)
   const handleError = (err: Error): void => {
     setSelectedTag(undefined)
-    setErrorMsg(err.message)
+    props.handleError(err)
   }
   const handleSubmit = (tagId: number): void => {
     window.api
       .applyTagRuleToTransactions(tagId)
       // TODO: At some point display to the user how many changes were made
       // .then((count) => console.log(count))
-      .catch((err: Error) => setErrorMsg(err.message))
+      .catch(props.handleError)
       .finally(() => setSelectedTag(undefined))
   }
   // Incase you want to delete all associated tags, but the alternative for now
@@ -44,10 +43,7 @@ const TagRuleDropdownAndInfo = (props: TagRuleDropdownAndInfoProps): JSX.Element
 
   useEffect(() => setTags(props.tags), [props.tags])
   useEffect(() => {
-    window.api
-      .getTags(tagInput)
-      .then(setTags)
-      .catch((err: Error) => setErrorMsg(err.message))
+    window.api.getTags(tagInput).then(setTags).catch(props.handleError)
   }, [tagInput])
 
   return (
@@ -85,7 +81,6 @@ const TagRuleDropdownAndInfo = (props: TagRuleDropdownAndInfoProps): JSX.Element
           handleError={handleError}
         />
       )}
-      <ErrorModal contentText={errorMsg} handleClose={(): void => setErrorMsg('')} />
     </div>
   )
 }

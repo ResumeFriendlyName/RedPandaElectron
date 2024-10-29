@@ -14,6 +14,8 @@ const SettingsView = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false)
   const [tags, setTags] = useState<Tag[]>([])
 
+  const handleError = (err: Error): void => setErrorMsg(err.message)
+
   const handleFetchTags = (): void => {
     window.api
       .getTags()
@@ -66,18 +68,14 @@ const SettingsView = (): JSX.Element => {
             <tr>
               <td className="font-semibold select-none">Tags</td>
               <td>
-                <AllTags
-                  tags={tags}
-                  handleFetchTags={handleFetchTags}
-                  handleError={(err: Error): void => setErrorMsg(err.message)}
-                />
+                <AllTags tags={tags} handleFetchTags={handleFetchTags} handleError={handleError} />
               </td>
             </tr>
             {/* Auto tag setting */}
             <tr>
               <td className="font-semibold select-none">Auto Tag Rules</td>
               <td>
-                <TagRuleDropdownAndInfo tags={tags} />
+                <TagRuleDropdownAndInfo tags={tags} handleError={handleError} />
               </td>
             </tr>
           </tbody>
