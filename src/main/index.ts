@@ -1,9 +1,9 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import { importTransactionFiles } from './cores/dialogCore'
+import { fatalError, importTransactionFiles } from './cores/dialogCore'
 import { closeDatabase, setupDatabase } from './cores/dbCore/dbCore'
-import { translateBATransactions } from './cores/translationCore'
+import { translateBATransactions, translateCBTransactions } from './cores/translationCore'
 import TransactionResponse from '../renderer/src/models/transactionResponse'
 import UserSettings from '../renderer/src/models/userSettings'
 import { Database } from 'sqlite3'
@@ -37,6 +37,7 @@ import Tag from '../renderer/src/models/tag'
 import CashFlow from '../renderer/src/models/cashflow'
 import TagAmount from '../renderer/src/models/tagAmount'
 import TagRule from '../renderer/src/models/tagRule'
+import { BankType } from '../renderer/src/models/types'
 
 function createWindow(): void {
   // Create the browser window.
@@ -94,7 +95,17 @@ app.whenReady().then(() => {
       const stringTransactions = await importTransactionFiles(window, userSettings.bankPref)
 
       if (stringTransactions.length > 0) {
-        const transactions: Transaction[] = translateBATransactions(stringTransactions)
+        let transactions: Transaction[] = []
+        switch (userSettings.bankPref) {
+          case BankType.BANK_AUSTRALIA:
+            transactions = translateBATransactions(stringTransactions)
+            break
+          case BankType.COMMONWEALTH_BANK:
+            transactions = translateCBTransactions(stringTransactions)
+            break
+          default:
+            fatalError(`BankType ${userSettings.bankPref} translation not implemented!`)
+        }
         const dupeTransactions: Transaction[] = await getDuplicateTransactions(db, transactions)
         const uniqueTransactions: Transaction[] = transactions.filter(
           (transaction) => !dupeTransactions.includes(transaction)

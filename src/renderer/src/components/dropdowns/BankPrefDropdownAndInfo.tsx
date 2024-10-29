@@ -22,7 +22,7 @@ const BankPrefDropdownAndInfo = (props: BankPrefDropdownProps): JSX.Element => {
         </tr>
         <tr>
           <th className="text-start">Commonwealth Bank</th>
-          <td className="text-start">Accepted bank statements will be in pdf.</td>
+          <td className="text-start">Accepted bank statements will be in csv.</td>
         </tr>
       </tbody>
     </table>

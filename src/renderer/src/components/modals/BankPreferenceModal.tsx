@@ -15,7 +15,7 @@ const BankPreferenceModal = (props: BankPreferenceModalProps): JSX.Element => {
     if (selectedBank == BankType.BANK_AUSTRALIA) {
       setBankInfo('Accepted bank statements will be in csv.')
     } else if (selectedBank == BankType.COMMONWEALTH_BANK) {
-      setBankInfo('Accepted bank statements will be in pdf.')
+      setBankInfo('Accepted bank statements will be in csv.')
     }
   }, [selectedBank])
 
