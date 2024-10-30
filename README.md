@@ -23,7 +23,7 @@ $ npm run dev
 ### Build
 
 ```bash
-# For windows
+# For windows, make sure developer mode is enabled
 $ npm run build:win
 
 # For macOS
