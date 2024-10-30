@@ -1,6 +1,6 @@
 {
-  "name": "Red Panda",
-  "version": "1.0.0",
+  "name": "red_panda",
+  "version": "0.9",
   "description": "Personal finance, done locally.",
   "main": "./dist/main/index.js",
   "author": "ResumeFriendlyName",

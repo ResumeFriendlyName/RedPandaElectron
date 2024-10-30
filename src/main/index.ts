@@ -38,6 +38,7 @@ import CashFlow from '../renderer/src/models/cashflow'
 import TagAmount from '../renderer/src/models/tagAmount'
 import TagRule from '../renderer/src/models/tagRule'
 import { BankType } from '../renderer/src/models/types'
+import { getIconPath } from './utils'
 
 function createWindow(): void {
   // Create the browser window.
@@ -52,7 +53,7 @@ function createWindow(): void {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     },
-    icon: '../../public/redPandaLogo.png',
+    icon: getIconPath(),
     titleBarStyle: 'hidden',
     titleBarOverlay: true
   })
