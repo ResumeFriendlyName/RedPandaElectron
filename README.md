@@ -22,13 +22,8 @@ $ npm run dev
 
 ### Build
 
-Note for Windows you will need to do a few workaround steps:
-
-1. Replace `"main": "./dist/main/index.js",` in `package.json` with `"main": "./out/main/index.js",`
-2. Temporarily enable developer mode
-
 ```bash
-# For windows
+# For windows, make sure developer mode is enabled
 $ npm run build:win
 
 # For macOS
